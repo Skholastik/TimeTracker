@@ -1,0 +1,27 @@
+<nav class="menu" tabindex="0">
+  <div class="logo"><span>Time Tracker</span></div>
+  <div class="smartphone-menu-trigger"></div>
+  <header class="avatar">
+    <img src="http://images-cdn.9gag.com/photo/4788755_700b.jpg"/>
+    <h2>John B.</h2>
+  </header>
+  <ul>
+    <li [routerLink]=" ['./WorkDashBoard'] " tabindex="0" class="icon-briefcase"><a>Моя работа</a></li>
+    <li [routerLink]=" ['./Projects'] " tabindex="0" class="icon-dashboard"><a>Проекты</a></li>
+    <li [routerLink]=" ['./Reports'] " tabindex="0" class="icon-users"><a>Отчеты</a></li>
+    <li tabindex="0" class="icon-settings"><a>Settings</a></li>
+  </ul>
+</nav>
+<div class="main-content">
+  <div class="content-header"></div>
+
+  <div class="router-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+
+<!--    <md-progress-bar  mode="determinate" [value]="determinateValue" color="primary" *ngIf="loading"></md-progress-bar>
+-->
+
+
+

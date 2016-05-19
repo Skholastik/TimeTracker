@@ -1,0 +1,164 @@
+<div id="management-content">
+  <div id="first-level">
+    <div id="name-bar"
+         (click)="checkAccessToChangeName()">
+      <span id="task-name"
+            *ngIf="!showTaskNameInput">
+        {{task.name}}
+      </span>
+      <md-input id="taskNameInput"
+                *ngIf="showTaskNameInput"
+                #name [value]="task.name"
+                (keydown.enter)="changeName(name.value)"
+                (mouseleave)="changeName(name.value)">
+      </md-input>
+    </div>
+
+    <div id="creation-date-bar">
+      Создана: {{task.creationDateTime}}
+    </div>
+
+    <div id="owner-name-bar">
+      ( Владелец : {{task.owner.name}} )
+    </div>
+
+    <div id="executor-name-bar">
+      <span *ngIf="task.executor!=undefined">
+        ( Исполнитель : {{task.executor.name}} )
+      </span>
+      <span *ngIf="task.executor==undefined">
+        Исполнитель не назначен
+      </span>
+    </div>
+  </div>
+
+  <div id="second-level">
+    <div id="status-bar">
+      <div (click)="openCloseStatusBar()">
+        <span>{{task.status}}</span>
+        <img src="https://cdn4.iconfinder.com/data/icons/geomicons/32/672341-triangle-down-128.png" width="5%">
+      </div>
+      <div *ngIf=" isStatusBarOpen" id="drop-status-menu"
+           (mouseleave)="openCloseStatusBar()">
+        <ul>
+          <li *ngFor="let status of statusList"
+              (click)="changeStatus(status)">
+            {{status}}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="drop-report-menu">
+      <button md-raised-button class="md-raised md-primary"
+              (click)="openCloseReportBar()">
+        Создать отчет
+      </button>
+      <div *ngIf="showReportBar" id="create-report-bar">
+        <report-bar [task]="task" (createdReport)="reportCreated($event)"></report-bar>
+      </div>
+    </div>
+
+
+    <div id="add-executor-bar">
+      <select [(ngModel)]="selectedUserName"
+              (ngModelChange)="userSelected()">
+        <option selected>Выбрать Исполнителя</option>
+        <option *ngFor=" let user of userList">{{user.name}}
+      </option>
+      </select>
+      <button md-raised-button class="md-raised md-primary"
+              (click)="addTaskExecutor()">
+        Добавить
+      </button>
+    </div>
+  </div>
+
+  <div id="third-level">
+    <!--  <div id="select-end-date">
+        <span>Выбрать дату окончания</span>
+      </div>-->
+    <div id="add-sub-task">
+
+      <div id="create-sub-task-bar"
+           (click)="checkAccessToCreateSubTask()">
+      <span id="just-do-it-bar"
+            *ngIf="!showSubTaskNameInput">
+        + Добавить Подзадачу
+      </span>
+        <md-input id="subTaskNameInput"
+                  *ngIf="showSubTaskNameInput"
+                  #subTaskName
+                  (keydown.enter)="createTask(subTaskName.value)"
+                  (mouseleave)="showSubTaskNameInput=false">
+        </md-input>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!--  <div id="fourth-level">
+      <div id="sub-task-list">
+        <ul>
+          <li *ngFor="let task of project.taskList"
+              (click)="moveToTask(task)">
+            <span>{{task.name}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>-->
+
+
+  <div id="fifth-level">
+    <span id="description-span">Описание:</span>
+    <div id="task-description">
+      <div id="description"
+           *ngIf="!showTaskDescriptionTextArea"
+           (click)="checkAccessToChangeDescription()">
+        <span *ngIf="task.description==undefined ||task.description.length==0 ">
+          Заполнить описание
+        </span>
+        <span
+          *ngIf="task.description!=undefined">
+          {{task.description}}
+        </span>
+      </div>
+
+      <div id="descriptionTextArea"
+           *ngIf="showTaskDescriptionTextArea">
+        <textarea #descr [value]="task.description"
+                  (keydown.enter)="changeDescription(descr.value)"
+                  (mouseleave)="changeDescription(descr.value)">
+        </textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="sixth-level">
+    <div id="report-bar">
+      <ul>
+        <li *ngFor="let report of task.reportList">
+          <div id="report-bar-header">
+            <div id="author"> Автор: {{report.creator.name}}</div>
+            <div id="creation-date">Создан:{{report.creationDateTime}}</div>
+          </div>
+          <div id="report">{{report.report}}</div>
+          <div id="spend-time">Времени затрачено: {{report.workTime}}
+            за {{report.workDate}}
+          </div>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+

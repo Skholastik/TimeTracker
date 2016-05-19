@@ -1,0 +1,13 @@
+<div id="login">
+  <h1>Добро пожаловать!</h1>
+  <form>
+    <div class="field-wrap">
+      <input type="text" [(ngModel)]="username" placeholder="Логин"/>
+    </div>
+    <div class="field-wrap">
+      <input type="password" [(ngModel)]="password"  placeholder="Пароль"/>
+    </div>
+    <p class="forgot"><a href="#">Забыли пароль?</a></p>
+    <button class="button button-block" (click)="authenticate()">Вход</button>
+  </form>
+</div>

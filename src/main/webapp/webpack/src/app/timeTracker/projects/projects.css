@@ -1,0 +1,123 @@
+#projects-content {
+  float: left;
+  margin: 20px;
+  height: 100%;
+  font-family: "Open sans", "lucida grande", "Segoe UI", arial, verdana, "lucida sans unicode", tahoma, sans-serif;
+
+}
+
+#projects-list-bar {
+  float: left;
+  display: inline-block;
+  width: 400px;
+  height: 100%;
+  background-color: white;
+}
+
+#projects-menu ul {
+  padding: 0;
+  margin: 0;
+}
+
+#projects-menu ul li {
+  list-style: none;
+  display: inline-block;
+  padding: 5px 10px;
+  margin-right: 10px;
+  font-size: 13px;
+  color: #6b99c7;
+  cursor: pointer;
+}
+
+#projects-menu ul li:hover {
+  background-color: #f5f8fc;
+}
+
+#project-list {
+  display: block;
+}
+
+#project-list #create-project-button  {
+  padding: 10px;
+  margin: 0 0;
+  cursor: pointer;
+}
+
+#project-list #create-project-button #plus-part {
+  display: inline-block;
+  color: #6b99c7;
+  font-size: 25px;
+  font-weight: bold;
+}
+
+#project-list #create-project-button #create-part {
+  display: inline-block;
+  color: #6b99c7;
+  font-size: 15px;
+}
+
+#create-project-button div:hover {
+  background-color: #f5f8fc;
+}
+
+#project-list #create-project-button form {
+  padding: 10px;
+  margin: 0 0;
+}
+
+#project-list #create-project-button input {
+  padding: 5px 25px;
+}
+#project-list #create-project-button button {
+  background-color: rgba(26, 177, 136, 1);
+ }
+
+#project-list ul {
+  padding: 0;
+  margin: 0;
+  display: block;
+  list-style: none;
+}
+
+#project-list li {
+  padding: 10px 0;
+  border-top:   1px solid #eaebec;
+  cursor: pointer;
+}
+
+#project-list li:hover {
+ background-color: aliceblue;
+}
+
+
+#project-list li span {
+  padding-left: 40px;
+  color: #515151;
+  font-weight: 400;
+}
+
+
+#project-list #task-list li {
+  padding: 5px 0;
+  border-top:  1px solid #eaebec;
+  font-size: 15px;
+  background-color: #929292;
+}
+
+#project-list #task-list li span {
+  padding-left: 60px;
+  color: #515151;
+  font-weight: 300;
+}
+
+#project-list #task-list li:hover {
+  background-color: aliceblue;
+}
+
+
+#project-task-management {
+  display: inline-block;
+  float: left;
+}
+
+

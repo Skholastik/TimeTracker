@@ -1,0 +1,38 @@
+
+<div id="report-bar-container">
+
+  <div id="report-bar-indent">
+    <div id="report-bar-header">
+      <span>Часы</span>
+      <span>Минуты</span>
+      <div id="report-bar-timer">
+        <input id="hours" [(ngModel)]="inputHours" maxlength="2"
+               onkeyup="this.value = this.value.replace (/[^0-9]/, '')">
+        <span id="report-bar-timer-colon">:</span>
+        <input id="minutes" [(ngModel)]="inputMinutes" maxlength="2"
+               onkeyup="this.value = this.value.replace (/[^0-9]/, '')">
+      </div>
+
+        <div id="mega-calendar">
+            <span>За {{reportDate}}</span>
+        </div>
+
+    </div>
+
+    <div id="report-bar-textarea">
+    <textarea [(ngModel)]="inputReport">
+
+    </textarea>
+      <span id="errorMessage" *ngIf="errorMessage.length!=0">
+        {{errorMessage}}
+      </span>
+    </div>
+
+    <div id="report-bar-send-report">
+      <button md-raised-button class="md-raised md-primary"
+      (click)="createReport()">Добавить отчет
+      </button>
+    </div>
+  </div>
+
+</div>

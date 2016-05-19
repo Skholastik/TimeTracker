@@ -1,0 +1,189 @@
+#management-content {
+  margin-left: 15px;
+  width: 100%;
+  background-color: white;
+  font-family: "Open sans", "lucida grande", "Segoe UI", arial, verdana, "lucida sans unicode", tahoma, sans-serif;
+}
+
+#first-level {
+  display: block;
+  border-bottom: 1px solid #eaebec;
+  padding: 15px 100px 15px 20px;
+}
+
+#first-level #project-name {
+  display: inline-block;
+  font-weight: 300;
+  font-size: 25px;
+  color: rgba(26, 177, 136, 1);
+
+}
+
+#first-level #projectNameInput {
+  display: inline-block;
+  font-weight: 100;
+  font-size: 22px;
+  width: 100%;
+}
+
+#first-level #creation-date-bar {
+  display: inline-block;
+  color: rgba(19, 35, 47, 0.9);
+}
+
+#first-level #owner-name-bar {
+  margin-left: 20px;
+  display: inline-block;
+  color: rgba(19, 35, 47, 0.9);
+  font-weight: 800;
+}
+
+#second-level {
+  display: block;
+  border-bottom: 1px solid #eaebec;
+}
+
+#second-level #status-bar {
+  display: inline-block;
+  padding: 10px 50px 10px 0;
+  border-left: 6px solid rgba(26, 177, 136, 1);
+  cursor: pointer;
+}
+
+#second-level #status-bar span {
+  padding-left: 10px;
+  font-weight: 700;
+}
+
+#second-level #drop-status-menu {
+  z-index: 2;
+
+  position: absolute;
+  width: 100px;
+  height: 150px;
+  background-color: white;
+  border: 1px solid #eaebec;
+}
+
+#second-level #drop-status-menu ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#second-level #drop-status-menu ul li {
+  font-weight: 300;
+  padding: 10px 0 10px 5px;
+}
+
+#second-level #drop-status-menu ul li:hover {
+  color: white;
+  background-color: rgba(26, 177, 136, 1);
+}
+
+#second-level #add-executor-bar {
+  display: inline-block;
+}
+
+#second-level #add-executor-bar select {
+  padding: 5px 20px;
+  font-size: 15px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+#third-level {
+  z-index: 1;
+  display: block;
+  color: black;
+  font-weight: 300;
+  border-bottom: 1px solid #eaebec;
+}
+
+#third-level #select-end-date {
+  display: inline-block;
+}
+
+#third-level #timer {
+  display: inline-block;
+}
+
+#third-level #create-task-bar {
+  padding: 10px 0;
+  margin-left: 10px;
+  display: inline-block;
+}
+
+#third-level #create-task-bar #just-do-it-bar {
+  font-size: 20px;
+  cursor: pointer;
+
+}
+
+#third-level #create-task-bar #taskNameInput {
+  margin-left: 10px;
+  display: inline-block;
+  font-size: 20px;
+  width: 100%;
+}
+
+#fourth-level {
+}
+
+#fourth-level #task-list ul {
+  padding: 0;
+  margin: 0;
+  width: auto;
+  list-style: none;
+  border-right: 5px solid rgba(26, 177, 136, 1);
+  border-left: 5px solid rgba(26, 177, 136, 1);
+}
+
+#fourth-level #task-list ul li {
+  padding: 6px 0;
+  font-size: 15px;
+  font-weight: 300;
+  color: #828282;
+  background-color: #FAFAFA;
+  border-top: 1px solid #eaebec;
+  cursor: pointer;
+}
+
+#fourth-level #task-list ul li:hover {
+
+  background-color: rgba(26, 177, 136, 0.8);
+  color: white;
+
+  -moz-transition: all 0.5s ease-out 0s;
+  -webkit-transition: all 0.5s ease-out 0s;
+  transition: all 0.5s ease-out 0s;
+}
+
+#fourth-level #task-list ul li span {
+  margin-left: 15px;
+}
+
+#fifth-level {
+  border-top: 1px solid #eaebec;
+
+}
+#fifth-level #description-span {
+  display: block;
+  padding: 10px 0 5px 20px;
+  font-size: 20px;
+  font-weight: 200;
+}
+#fifth-level #description {
+  padding: 5px 20px 20px 20px;
+  min-width: 200px;
+  min-height: 200px;
+  border-bottom: 1px solid #eaebec;
+}
+
+#fifth-level textarea {
+  padding: 5px 20px 20px 20px;
+  font-size: 17px;
+  min-width: 460px;
+  min-height: 250px;
+}
+

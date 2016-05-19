@@ -1,0 +1,277 @@
+#management-content {
+  margin-left: 15px;
+  width: 100%;
+  background-color: white;
+  font-family: "Open sans", "lucida grande", "Segoe UI", arial, verdana, "lucida sans unicode", tahoma, sans-serif;
+}
+
+#first-level {
+  display: block;
+  border-bottom: 1px solid #eaebec;
+  padding: 15px 100px 15px 20px;
+}
+
+#first-level #task-name {
+  display: inline-block;
+  font-weight: 300;
+  font-size: 25px;
+  color: rgba(26, 177, 136, 1);;
+
+}
+
+#first-level #taskNameInput {
+  display: inline-block;
+  font-weight: 100;
+  font-size: 22px;
+  width: 100%;
+}
+
+#first-level #creation-date-bar {
+  display: inline-block;
+  color: rgba(19, 35, 47, 0.9);
+}
+
+#first-level #owner-name-bar {
+  margin-left: 20px;
+  display: inline-block;
+  color: rgba(19, 35, 47, 0.9);
+  font-weight: 800;
+}
+
+#first-level #executor-name-bar {
+  margin-left: 20px;
+  display: block;
+  color: rgba(19, 35, 47, 0.9);
+  font-weight: 800;
+}
+
+#second-level {
+  display: block;
+  border-bottom: 1px solid #eaebec;
+}
+
+#second-level #status-bar {
+  display: inline-block;
+  padding: 10px 10px 10px 0;
+  border-left: 6px solid rgba(26, 177, 136, 1);
+  cursor: pointer;
+}
+
+#second-level #status-bar span {
+  padding-left: 10px;
+  font-weight: 700;
+}
+
+#second-level #drop-status-menu {
+  z-index: 2;
+
+  position: absolute;
+  width: 100px;
+  height: 180px;
+  background-color: white;
+  border: 1px solid #eaebec;
+}
+
+#second-level #drop-status-menu ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+#second-level #drop-status-menu ul li {
+  font-weight: 300;
+  padding: 10px 0 10px 5px;
+}
+
+#second-level #drop-status-menu ul li:hover {
+  color: white;
+  background-color: rgba(26, 177, 136, 1);
+}
+
+#second-level #drop-report-menu  {
+  margin-left: 10px;
+  display: inline-block;
+}
+
+#second-level #drop-report-menu button  {
+  background-color: rgba(26, 177, 136, 1);
+}
+
+#second-level #drop-report-menu button:hover {
+  background-color: rgba(26, 177, 136, 0.8);
+}
+
+#second-level #add-executor-bar {
+  display: inline-block;
+}
+#second-level #add-executor-bar button {
+  background-color: rgba(26, 177, 136, 1);
+}
+
+
+#second-level #create-report-bar{
+  position: absolute;
+  left: 780px;
+  top: 240px;
+}
+
+#second-level #add-executor-bar select {
+  padding: 5px 20px;
+  font-size: 15px;
+  font-weight: 300;
+  cursor: pointer;
+}
+
+#third-level {
+  z-index: 1;
+  display: block;
+  color: black;
+  font-weight: 300;
+  border-bottom: 1px solid #eaebec;
+}
+
+#third-level #select-end-date {
+  display: inline-block;
+}
+
+#third-level #timer {
+  display: inline-block;
+}
+
+#third-level #create-sub-task-bar {
+  padding: 10px 0;
+  margin-left: 10px;
+  display: inline-block;
+}
+
+#third-level #create-sub-task-bar #just-do-it-bar {
+  font-size: 20px;
+  cursor: pointer;
+
+}
+
+#third-level #create-sub-task-bar #subTaskNameInput {
+  margin-left: 10px;
+  display: inline-block;
+  font-size: 20px;
+  width: 100%;
+}
+
+#fourth-level {
+}
+
+#fourth-level #sub-task-list ul {
+  padding: 0;
+  margin: 0;
+  width: auto;
+  list-style: none;
+  border-right: 5px solid rgba(26, 177, 136, 1);
+  border-left: 5px solid rgba(26, 177, 136, 1);
+}
+
+#fourth-level #sub-task-list ul li {
+  padding: 6px 0;
+  font-size: 15px;
+  font-weight: 300;
+  color: #828282;
+  background-color: #FAFAFA;
+  border-top: 1px solid #eaebec;
+  cursor: pointer;
+}
+
+#fourth-level #sub-task-list ul li:hover {
+
+  background-color: rgba(26, 177, 136, 0.8);
+  color: white;
+
+  -moz-transition: all 0.5s ease-out 0s;
+  -webkit-transition: all 0.5s ease-out 0s;
+  transition: all 0.5s ease-out 0s;
+}
+
+#fourth-level #sub-task-list ul li span {
+  margin-left: 15px;
+}
+
+#fifth-level {
+  border-top: 1px solid #eaebec;
+
+}
+#fifth-level #description-span {
+  display: block;
+  padding: 10px 0 5px 20px;
+  font-size: 20px;
+  font-weight: 200;
+}
+#fifth-level #description {
+  padding: 5px 20px 20px 20px;
+  min-width: 200px;
+  min-height: 200px;
+  border-bottom: 1px solid #eaebec;
+}
+
+#fifth-level textarea {
+  padding: 5px 20px 20px 20px;
+  font-size: 17px;
+  min-width: 460px;
+  min-height: 250px;
+}
+
+#sixth-level{
+  display: block;
+}
+
+#sixth-level #report-bar{
+  display: block;
+}
+
+#sixth-level #report-bar ul{
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#sixth-level #report-bar ul li {
+  border-bottom: 1px solid #eaebec;
+}
+
+#sixth-level #report-bar ul li #report-bar-header {
+  padding: 5px 0;
+  color: white;
+  background-color: rgba(26, 177, 136, 1);
+}
+
+#sixth-level #report-bar ul li #author{
+  margin-left: 10px;
+  display: inline-block;
+  font-size: 16px;
+}
+
+#sixth-level #report-bar ul li #creation-date{
+  float: right;
+  display: inline-block;
+  margin-right: 5px;
+  font-size: 16px;
+}
+
+#sixth-level #report-bar ul li #report{
+  min-height: 50px;
+  display:block;
+  margin: 10px;
+  font-size: 18px;
+}
+
+#sixth-level #report-bar ul li #spend-time{
+  display:block;
+  margin: 0 0 5px 10px;
+  font-size: 15px;
+  color: rgba(26, 177, 136, 1);
+}
+
+
+
+
+
+
+
+

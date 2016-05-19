@@ -1,0 +1,25 @@
+<select [(ngModel)]="selectedType"
+        (ngModelChange)="reportTypeSelected()">
+  <option selected>Выберите отчет</option>
+  <option *ngFor="let reportType of reportTypeList">
+    {{reportType}}
+  </option>
+
+</select>
+
+<select>
+  <option>Выберете конкретный проект или задачу</option>
+  <option *ngFor="let project of projectList">
+    {{project.name}}
+  </option>
+</select>
+
+<label>С</label>
+<input placeholder="укажите дату в формате dd-mm-yyyy">
+<label>По</label>
+<input placeholder="укажите дату в формате dd-mm-yyyy">
+
+<select>
+  <option>Можете указать сотрудников</option>
+  <option>Все</option>
+</select>

@@ -1,0 +1,126 @@
+<div id="management-content">
+  <div id="first-level">
+    <div id="name-bar"
+         (click)="checkAccessToChangeName()">
+      <span id="project-name"
+            *ngIf="!showProjectNameInput">
+        {{project.name}}
+      </span>
+      <md-input id="projectNameInput"
+                *ngIf="showProjectNameInput"
+                #name [value]="project.name"
+                (keydown.enter)="changeName(name.value)"
+                (mouseleave)="changeName(name.value)">
+      </md-input>
+    </div>
+
+    <div id="creation-date-bar">
+      Создан: {{project.creationDateTime}}
+    </div>
+
+    <div id="owner-name-bar">
+      ( Владелец : {{project.owner.name}} )
+    </div>
+  </div>
+
+  <div id="second-level">
+    <div id="status-bar">
+      <div (click)="openCloseStatusBar()">
+        <span>{{project.status}}</span>
+        <img src="https://cdn4.iconfinder.com/data/icons/geomicons/32/672341-triangle-down-128.png" width="5%">
+      </div>
+      <div *ngIf=" isStatusBarOpen" id="drop-status-menu"
+           (mouseleave)="openCloseStatusBar()">
+        <ul>
+          <li *ngFor="let status of statusList"
+              (click)="changeStatus(status)">
+            {{status}}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div id="add-executor-bar">
+      <select>
+        <option selected> Добавить пользователя</option>
+        <option>Миша</option>
+        <option>Вася</option>
+      </select>
+
+    </div>
+  </div>
+
+  <div id="third-level">
+    <!--  <div id="select-end-date">
+        <span>Выбрать дату окончания</span>
+      </div>-->
+    <div id="add-task">
+
+      <div id="create-task-bar"
+           (click)="checkAccessToCreateTask()">
+      <span id="just-do-it-bar"
+            *ngIf="!showTaskNameInput">
+        + Добавить задачу
+      </span>
+        <md-input id="taskNameInput"
+                  *ngIf="showTaskNameInput"
+                  #taskName
+                  (keydown.enter)="createTask(taskName.value)"
+                  (mouseleave)="showTaskNameInput=false">
+        </md-input>
+      </div>
+
+
+    </div>
+  </div>
+
+  <div id="fourth-level">
+    <div id="task-list">
+      <ul>
+        <li *ngFor="let task of project.taskList"
+        (click)="moveToTask(task)">
+          <span>{{task.name}}</span>
+        </li>
+      </ul>
+
+    </div>
+  </div>
+
+
+  <div id="fifth-level">
+    <span id="description-span">Описание:</span>
+    <div id="project-description">
+      <div id="description"
+           *ngIf="!showProjectDescriptionTextArea"
+           (click)="checkAccessToChangeDescription()">
+        <span *ngIf="project.description==undefined ||project.description.length==0 ">
+          Заполнить описание
+        </span>
+        <span
+          *ngIf="project.description!=undefined">
+          {{project.description}}
+        </span>
+      </div>
+
+      <div id="descriptionTextArea"
+           *ngIf="showProjectDescriptionTextArea">
+        <textarea #descr [value]="project.description"
+                  (keydown.enter)="changeDescription(descr.value)"
+                  (mouseleave)="changeDescription(descr.value)">
+        </textarea>
+        <!--<button md-raised-button class="md-raised md-primary"-->
+        <!--(click)="changeDescription(descr.value)">Изменить-->
+        <!--</button>-->
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+
+
+
+
+
+
