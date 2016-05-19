@@ -1,0 +1,32 @@
+<!--  <div class="form">
+
+    <div>
+      <form name="userForm">
+          <md-input-container>
+            <md-input
+              placeholder="Логин" autofocus>
+            </md-input>
+          </md-input-container>
+          <md-input
+            placeholder="Пароль" autofocus>
+          </md-input>
+      </form>
+    </div>
+  </div>-->
+
+<div class="form">
+
+  <ul class="tab-group">
+    <li [ngClass]="logInClass"><a (click)="changeMenu('LogIn')">Войти</a></li>
+    <li [ngClass]="signUpClass"><a (click)="changeMenu('SignUp')">Регистрация</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <log-in *ngIf="showLogIn"></log-in>
+    <sign-up *ngIf="showSignUp"></sign-up>
+  </div>
+
+</div>
+
+
+

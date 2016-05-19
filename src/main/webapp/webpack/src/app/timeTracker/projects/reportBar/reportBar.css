@@ -1,0 +1,62 @@
+#report-bar-container {
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#report-bar-container #report-bar-indent {
+  padding: 15px;
+}
+
+#report-bar-container #report-bar-timer {
+  display: inline-block;
+  font: 24px/32px 'Tahoma', sans-serif;
+}
+
+#report-bar-container #report-bar-timer input {
+  width: 25px;
+  height: 40px;
+  border: 1px solid #d9d9d9;
+  font: 24px/32px 'Tahoma', sans-serif;
+  text-align: right;
+  padding: 0 3px;
+  vertical-align: middle;
+}
+
+#report-bar-container #report-bar-calendar {
+  margin-left: 10px;
+  display: inline-block;
+}
+
+#report-bar-container #report-bar-textarea {
+  margin-top: 10px;
+  display: block;
+}
+
+#report-bar-container #report-bar-textarea textarea {
+  width: 300px;
+  height: 140px;
+  font-size: 21px;
+  font-weight: 100;
+}
+
+#report-bar-container #errorMessage {
+  display: block;
+  font-size: 13px;
+  color: darkred;
+}
+
+#report-bar-container #mega-calendar {
+  color: rgba(26, 177, 136, 1);
+  cursor: pointer;
+}
+
+#report-bar-container #mega-calendar:hover {
+  color: rgba(26, 177, 136, 0.8);
+}
+
+#report-bar-container #report-bar-send-report button {
+  background-color: rgba(26, 177, 136, 1);
+}
+
+
+
