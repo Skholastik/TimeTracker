@@ -4,7 +4,12 @@
   <option *ngFor="let reportType of reportTypeList">
     {{reportType}}
   </option>
+</select>
 
+<select>
+  <option>Выберите отчет</option>
+  <option>Проект</option>
+  <option>Задача</option>
 </select>
 
 <select>
@@ -12,6 +17,8 @@
   <option *ngFor="let project of projectList">
     {{project.name}}
   </option>
+  <option>Проект</option>
+  <option>Задача</option>
 </select>
 
 <label>С</label>
@@ -22,4 +29,10 @@
 <select>
   <option>Можете указать сотрудников</option>
   <option>Все</option>
+</select>
+
+<select>
+  <option>Выберите тип отчета</option>
+  <option>Все отчеты</option>
+  <option>Потрачено времени человеком</option>
 </select>
