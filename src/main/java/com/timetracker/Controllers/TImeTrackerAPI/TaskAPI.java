@@ -41,7 +41,7 @@ public class TaskAPI {
                                           @Validated({UserDTO.AddTaskExecutor.class}) UserDTO transferUser) {
 
         String owner = getPrincipalName();
-        return taskService.addTaskExecutor(transferUser.getId(), taskId, owner);
+        return taskService.addTaskExecutor(taskId, transferUser.getId(), owner);
     }
 
     @RequestMapping(value = "/getProjectHighTaskList", method = RequestMethod.GET)
@@ -55,7 +55,7 @@ public class TaskAPI {
 
     @RequestMapping(value = "/getCreatedTaskList", method = RequestMethod.GET)
     public ResponseEntity getCreatedTaskList(@NotBlank(message = "Необходимо указать вашу временную зону (UTC)")
-                                                 @RequestParam String utcOffset) {
+                                             @RequestParam String utcOffset) {
 
         String userName = getPrincipalName();
         return taskService.getCreatedTaskList(userName, utcOffset);
@@ -93,7 +93,7 @@ public class TaskAPI {
 
     @RequestMapping(value = "/checkLowLevelAuthorities", method = RequestMethod.GET)
     public ResponseEntity checkLowLevelAuthorities(@NotBlank(message = "Необходимо указать ID задачи")
-                                                  @RequestParam Integer id) {
+                                                   @RequestParam Integer id) {
         String userName = getPrincipalName();
         return taskService.checkLowLevelAuthorities(id, userName);
     }

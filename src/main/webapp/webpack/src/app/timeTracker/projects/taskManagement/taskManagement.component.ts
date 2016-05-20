@@ -219,7 +219,7 @@ export class TaskManagement {
   }
 
   public getUserList():void {
-    if(this.userList.length==0){
+    if (this.userList.length == 0) {
       this.api_User.getUserList().subscribe(
         data=> {
           this.pushTransferUserListToListDTO(data.responseObjects.userList);
@@ -232,15 +232,19 @@ export class TaskManagement {
   }
 
   public addTaskExecutor():void {
-    if (this.selectedUser!= undefined) {
-        this.api_Task.addTaskExecutor(this.task.id,this.selectedUser.id).subscribe(
-          data=> {
-            console.log(data);
-          },
-          error=> {
-            console.log(error);
-          }
-        );
+    if (this.selectedUser != undefined) {
+      this.api_Task.addTaskExecutor(this.task.id, this.selectedUser.id).subscribe(
+        data=> {
+          console.log(data);
+          let newExecutor=new UserDTO();
+          newExecutor.fillFromJSON(JSON.stringify(data.responseObjects.executor))
+          this.task.executor=newExecutor;
+
+        },
+        error=> {
+          console.log(error);
+        }
+      );
     }
     else
       console.log('Необходимо выбрать исполнителя перед отправкой');
