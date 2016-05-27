@@ -6,6 +6,8 @@ import com.timetracker.Service.AncillaryServices.CustomAnnotation.CustomStatusVa
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.groups.Default;
+import java.util.HashSet;
+import java.util.Set;
 
 public class TaskDTO {
 
@@ -33,9 +35,19 @@ public class TaskDTO {
             groups = {SetStatus.class, Default.class})
     private String status;
 
-    private UserDTO owner;
+    private UserDTO creator;
 
     private UserDTO executor;
+
+    private Set<ReporterDTO> reporterList;
+
+    public void addReporter(ReporterDTO reporter) {
+
+        if (reporterList == null)
+            reporterList = new HashSet<>();
+
+        reporterList.add(reporter);
+    }
 
     public Integer getId() {
         return id;
@@ -101,12 +113,12 @@ public class TaskDTO {
         this.status = status;
     }
 
-    public UserDTO getOwner() {
-        return owner;
+    public UserDTO getCreator() {
+        return creator;
     }
 
-    public void setOwner(UserDTO owner) {
-        this.owner = owner;
+    public void setCreator(UserDTO creator) {
+        this.creator = creator;
     }
 
     public UserDTO getExecutor() {
@@ -117,6 +129,31 @@ public class TaskDTO {
         this.executor = executor;
     }
 
+    public Set<ReporterDTO> getReporterList() {
+        return reporterList;
+    }
+
+    public void setReporterList(Set<ReporterDTO> reporterList) {
+        this.reporterList = reporterList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TaskDTO)) return false;
+
+        TaskDTO taskDTO = (TaskDTO) o;
+
+        return getId().equals(taskDTO.getId());
+
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
+    }
+
+
     public interface SetName {
     }
 
@@ -125,4 +162,5 @@ public class TaskDTO {
 
     public interface SetStatus {
     }
+
 }

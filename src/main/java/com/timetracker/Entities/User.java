@@ -30,7 +30,7 @@ public class User extends BaseModel {
     @JoinColumn(name = "USER_ROLES_ID", referencedColumnName = "ID")
     UserRoles role;
 
-    @OneToMany(mappedBy = "owner", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Project> createdProjectList;
 
     @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -42,7 +42,7 @@ public class User extends BaseModel {
     @OneToMany(mappedBy = "participant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ProjectParticipants> takingPartProjectList;
 
-    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "reporter", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Report> createdReportList;
 
     public User() {

@@ -3,9 +3,12 @@ package com.timetracker.Service.Implementation;
 import com.timetracker.DAO.Interfaces.ProjectDao;
 import com.timetracker.DAO.Interfaces.TaskDao;
 import com.timetracker.DAO.Interfaces.UserDao;
-import com.timetracker.Entities.*;
 import com.timetracker.Entities.DTO.TaskDTO;
 import com.timetracker.Entities.DTO.UserDTO;
+import com.timetracker.Entities.Project;
+import com.timetracker.Entities.Status;
+import com.timetracker.Entities.Task;
+import com.timetracker.Entities.User;
 import com.timetracker.Service.AncillaryServices.ResponseMessage;
 import com.timetracker.Service.AncillaryServices.WordProcessor;
 import com.timetracker.Service.Interfaces.ProjectService;
@@ -21,8 +24,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,9 +44,9 @@ public class TaskServiceImpl implements TaskService {
     ProjectService projectService;
 
     @Override
-    public ResponseEntity createTask(String taskName, int ancestorProjectId, String userUtcOffset, String userName) {
+    public ResponseEntity createTask(String taskName, int ancestorProjectId, String userUtcOffset, String creatorUserName) {
         String formattedTaskName = WordProcessor.prepareWordToDB(taskName);
-        User owner = userDao.findByUserName(userName);
+        User creator = userDao.findByUserName(creatorUserName);
 
         if (isTaskExist(formattedTaskName, ancestorProjectId)) {
             ResponseMessage responseMessage = new ResponseMessage(false, "Задание с названием: " + "'"
@@ -62,23 +63,16 @@ public class TaskServiceImpl implements TaskService {
         taskDao.createTask(newTask);
 
         Project ancestor = projectDao.getProjectById(ancestorProjectId);
+
         newTask.setAncestorProject(ancestor);
-        newTask.setCreator(owner);
+        newTask.setCreator(creator);
+
         if (newTask.getAncestorTask() == null)
             newTask.setPath(ancestor.getId() + "." + newTask.getId());
         else
             newTask.setPath(newTask.getAncestorTask().getPath() + "." + newTask.getId());
 
-        TaskDTO taskDTO = new TaskDTO();
-        taskDTO.setId(newTask.getId());
-        taskDTO.setName(newTask.getName());
-        taskDTO.setStatus(newTask.getStatus());
-        taskDTO.setOwner(new UserDTO(owner.getUserName()));
-
-        ZonedDateTime userDateTime = serverDateTime.withZoneSameInstant(ZoneOffset.of(userUtcOffset));
-        /** #toString() необходим для того, чтобы место массива строк, вернулась одна строка */
-        taskDTO.setCreationDateTime(userDateTime.toLocalDateTime()
-                .toString());
+        TaskDTO taskDTO = taskToDTO(newTask,userUtcOffset);
 
         ResponseMessage responseMessage = new ResponseMessage(true, "");
         responseMessage.addResponseObject("task", taskDTO);
@@ -86,8 +80,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity addTaskExecutor(int taskId, int userId, String owner) {
-        ResponseEntity<ResponseMessage> responseEntity = checkHighLevelAuthorities(taskId, owner);
+    public ResponseEntity addTaskExecutor(int taskId, int userId, String creatorUserName) {
+        ResponseEntity<ResponseMessage> responseEntity = checkHighLevelAuthorities(taskId, creatorUserName);
 
         if (responseEntity.getStatusCode() == HttpStatus.FORBIDDEN)
             return responseEntity;
@@ -122,9 +116,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity getCreatedTaskList(String creatorName,String utcOffset) {
-        User owner=userDao.findByUserName(creatorName);
-        List<Task> createdTaskList=owner.getCreatedTaskList();
+    public ResponseEntity getCreatedTaskList(String creatorUserName, String utcOffset) {
+        User owner = userDao.findByUserName(creatorUserName);
+        List<Task> createdTaskList = owner.getCreatedTaskList();
         createdTaskList.size();
 
         List<TaskDTO> taskDTOList = taskListToDTOWithChangeOffset(createdTaskList, utcOffset);
@@ -149,9 +143,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity setName(int taskId, String name, String userName) {
+    public ResponseEntity setName(int taskId, String name, String creatorUserName) {
         Task task = taskDao.getTaskById(taskId);
-        ResponseEntity<ResponseMessage> responseEntity = checkLowLevelAuthorities(taskId, userName);
+        ResponseEntity<ResponseMessage> responseEntity = checkLowLevelAuthorities(taskId, creatorUserName);
 
         if (responseEntity.getStatusCode() == HttpStatus.FORBIDDEN)
             return responseEntity;
@@ -162,9 +156,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity setDescription(int taskId, String description, String userName) {
+    public ResponseEntity setDescription(int taskId, String description, String creatorUserName) {
         Task task = taskDao.getTaskById(taskId);
-        ResponseEntity<ResponseMessage> responseEntity = checkLowLevelAuthorities(taskId, userName);
+        ResponseEntity<ResponseMessage> responseEntity = checkLowLevelAuthorities(taskId, creatorUserName);
 
         if (responseEntity.getStatusCode() == HttpStatus.FORBIDDEN)
             return responseEntity;
@@ -174,9 +168,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public ResponseEntity setStatus(int taskId, String taskStatus, String userName) {
+    public ResponseEntity setStatus(int taskId, String taskStatus, String creatorUserName) {
         Task task = taskDao.getTaskById(taskId);
-        ResponseEntity<ResponseMessage> responseEntity = checkLowLevelAuthorities(taskId, userName);
+        ResponseEntity<ResponseMessage> responseEntity = checkLowLevelAuthorities(taskId, creatorUserName);
 
         if (responseEntity.getStatusCode() == HttpStatus.FORBIDDEN)
             return responseEntity;
@@ -217,43 +211,6 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    public List<TaskDTO> taskListToDTOWithChangeOffset(List<Task> taskList, String userUtcOffset) {
-        List<TaskDTO> taskDTOList = new ArrayList<>();
-
-        for (Task task : taskList) {
-            TaskDTO newTaskDTO = new TaskDTO();
-            newTaskDTO.setId(task.getId());
-            newTaskDTO.setName(task.getName());
-            newTaskDTO.setAncestorProjectId(task.getAncestorProject().getId());
-            newTaskDTO.setCreationDateTime(task.getCreationDateTime()
-                    .withZoneSameInstant(ZoneOffset.of(userUtcOffset))
-                    .toLocalDateTime().toString());
-            newTaskDTO.setStatus(task.getStatus());
-            newTaskDTO.setOwner(new UserDTO(task.getCreator().getUserName()));
-
-            if (task.getExecutor() != null) {
-                newTaskDTO.setExecutor(new UserDTO(task.getExecutor().getUserName()));
-            }
-
-            if (task.getDescription() != null)
-                newTaskDTO.setDescription(task.getDescription());
-
-            if (task.getPlannedEndDateTime() != null)
-                newTaskDTO.setPlannedEndDateTime(task.getPlannedEndDateTime()
-                        .withZoneSameInstant(ZoneOffset.of(userUtcOffset))
-                        .toLocalDateTime().toString());
-
-            if (task.getActualEndDateTime() != null)
-                newTaskDTO.setActualEndDateTime(task.getActualEndDateTime()
-                        .withZoneSameInstant(ZoneOffset.of(userUtcOffset))
-                        .toLocalDateTime().toString());
-
-            taskDTOList.add(newTaskDTO);
-        }
-        return taskDTOList;
-    }
-
-
     @Override
     public boolean isTaskExist(String taskName, int projectId) {
         Project project = projectDao.getProjectById(projectId);
@@ -265,4 +222,46 @@ public class TaskServiceImpl implements TaskService {
                 return true;
         return false;
     }
+
+    public List<TaskDTO> taskListToDTOWithChangeOffset(List<Task> taskList, String userUtcOffset) {
+        List<TaskDTO> taskDTOList = new ArrayList<>();
+
+        for (Task task : taskList)
+            taskDTOList.add(taskToDTO(task,userUtcOffset));
+
+        return taskDTOList;
+    }
+
+    public TaskDTO taskToDTO(Task task, String userUtcOffset) {
+        TaskDTO newTaskDTO = new TaskDTO();
+        newTaskDTO.setId(task.getId());
+        newTaskDTO.setName(task.getName());
+        newTaskDTO.setAncestorProjectId(task.getAncestorProject().getId());
+        newTaskDTO.setCreationDateTime(task.getCreationDateTime()
+                .withZoneSameInstant(ZoneOffset.of(userUtcOffset))
+                .toLocalDateTime().toString());
+        newTaskDTO.setStatus(task.getStatus());
+        newTaskDTO.setCreator(new UserDTO(task.getCreator().getUserName()));
+
+        if (task.getExecutor() != null) {
+            newTaskDTO.setExecutor(new UserDTO(task.getExecutor().getUserName()));
+        }
+
+        if (task.getDescription() != null)
+            newTaskDTO.setDescription(task.getDescription());
+
+        if (task.getPlannedEndDateTime() != null)
+            newTaskDTO.setPlannedEndDateTime(task.getPlannedEndDateTime()
+                    .withZoneSameInstant(ZoneOffset.of(userUtcOffset))
+                    .toLocalDateTime().toString());
+
+        if (task.getActualEndDateTime() != null)
+            newTaskDTO.setActualEndDateTime(task.getActualEndDateTime()
+                    .withZoneSameInstant(ZoneOffset.of(userUtcOffset))
+                    .toLocalDateTime().toString());
+
+        return newTaskDTO;
+    }
+
+
 }

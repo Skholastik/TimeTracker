@@ -14,7 +14,7 @@ public class LocalTimeAttributeConverter implements AttributeConverter<LocalTime
     }
 
     @Override
-    public LocalTime convertToEntityAttribute(Time qweTime) {
-        return (qweTime == null ? null : qweTime.toLocalTime());
+    public LocalTime convertToEntityAttribute(Time dbTime) {
+        return (dbTime == null ? null : dbTime.toLocalTime());
     }
 }

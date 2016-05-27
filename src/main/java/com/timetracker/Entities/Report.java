@@ -31,8 +31,8 @@ public class Report extends BaseModel {
     ZonedDateTime creationDateTime;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "CREATED_BY", referencedColumnName = "ID")
-    User creator;
+    @JoinColumn(name = "REPORTER", referencedColumnName = "ID")
+    User reporter;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "ANCESTOR_TASK_ID", referencedColumnName = "ID", nullable = true)
@@ -74,12 +74,12 @@ public class Report extends BaseModel {
         this.creationDateTime = creationDateTime;
     }
 
-    public User getCreator() {
-        return creator;
+    public User getReporter() {
+        return reporter;
     }
 
-    public void setCreator(User creator) {
-        this.creator = creator;
+    public void setReporter(User reporter) {
+        this.reporter = reporter;
     }
 
     public Task getAncestorTask() {

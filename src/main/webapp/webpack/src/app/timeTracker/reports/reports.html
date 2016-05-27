@@ -1,38 +1,115 @@
-<select [(ngModel)]="selectedType"
-        (ngModelChange)="reportTypeSelected()">
-  <option selected>Выберите отчет</option>
-  <option *ngFor="let reportType of reportTypeList">
-    {{reportType}}
-  </option>
-</select>
+<form id="reportForm"
+      [ngFormModel]="reportForm"
+      (ngSubmit)="createReport(reportForm.value)">
 
-<select>
-  <option>Выберите отчет</option>
-  <option>Проект</option>
-  <option>Задача</option>
-</select>
+  <div id="reportType">
+    <select [ngFormControl]="reportForm.controls['reportType']"
+            (ngModelChange)="getProjectOrTaskList(reportForm.value.reportType)">
 
-<select>
-  <option>Выберете конкретный проект или задачу</option>
-  <option *ngFor="let project of projectList">
-    {{project.name}}
-  </option>
-  <option>Проект</option>
-  <option>Задача</option>
-</select>
+      <option value="">Выберите тип отчета</option>
 
-<label>С</label>
-<input placeholder="укажите дату в формате dd-mm-yyyy">
-<label>По</label>
-<input placeholder="укажите дату в формате dd-mm-yyyy">
+      <option
+        *ngFor="let reportType of reportTypeList">
+        {{reportType}}
+      </option>
 
-<select>
-  <option>Можете указать сотрудников</option>
-  <option>Все</option>
-</select>
+    </select>
+  </div>
 
-<select>
-  <option>Выберите тип отчета</option>
-  <option>Все отчеты</option>
-  <option>Потрачено времени человеком</option>
-</select>
+  <div id="projectOrTaskId">
+    <select [ngFormControl]="reportForm.controls['projectOrTaskId']"
+            (ngModelChange)="getParticipantUserList(reportForm.value.reportType,
+                                                    reportForm.value.projectOrTaskId)"
+            [disabled]="reportForm.value.reportType=== '' ">
+
+      <option *ngIf="reportForm.value.reportType=== '' "
+              value="">
+        Для начала выберите тип отчета
+      </option>
+
+      <option *ngIf="reportForm.value.reportType===reportTypeList[0]"
+              value="">
+        Выберите Проект
+      </option>
+
+      <option *ngIf="reportForm.value.reportType===reportTypeList[1]"
+              value="">
+        Выберите Задачу
+      </option>
+
+      <template [ngIf]="reportForm.value.reportType===reportTypeList[0]">
+        <option *ngFor="let project of projectList"
+                [value]="project.id">
+          {{project.name}}
+        </option>
+      </template>
+
+      <template [ngIf]="reportForm.value.reportType===reportTypeList[1]">
+        <option *ngFor="let task of taskList"
+                [value]="task.id">
+          {{task.name}}
+        </option>
+      </template>
+
+    </select>
+  </div>
+
+  <div id="creatorId">
+    <select [ngFormControl]="reportForm.controls['userId']"
+            [disabled]="reportForm.value.reportType=== '' ">
+
+      <option value="">
+        Выберите пользователя
+      </option>
+
+      <template [ngIf]="reportForm.value.reportType!= '' &&
+                participantList.length == 0">
+        <option selected value="">
+          Нету назначенных исполнителей
+        </option>
+      </template>
+
+      <template [ngIf]="reportForm.value.reportType!= '' ">
+        <option [value]="user.id"
+                *ngFor="let user of participantList">
+          {{user.name}}
+        </option>
+      </template>
+    </select>
+  </div>
+
+  <div id="dates">
+
+    <label for="startDate">С</label>
+    <input [ngFormControl]="reportForm.controls['startDate']"
+           [disabled]="reportForm.value.reportType=== '' "
+           id="startDate" type="date">
+
+    <label for="endDate">По</label>
+    <input [ngFormControl]="reportForm.controls['endDate']"
+           [disabled]="reportForm.value.reportType=== '' "
+           id="endDate" type="date">
+  </div>
+
+  <button type="submit"
+          [disabled]="!reportForm.valid">
+    Создать отчет
+  </button>
+</form>
+
+
+<div id="report-show-bar">
+  <report-show-bar
+    [reportList]="reportList">
+
+  </report-show-bar>
+</div>
+
+
+
+
+
+
+
+
+

@@ -1,6 +1,6 @@
 import {Serializable} from './serializable.class.ts'
 import {UserDTO} from './userDTO.class'
-import {ReportDTO} from './reportDTO.class'
+import {ReporterDTO} from './reporterDTO.class'
 
 export class TaskDTO extends Serializable{
   id:string;
@@ -10,7 +10,7 @@ export class TaskDTO extends Serializable{
   plannedEndDateTime:string;
   actualEndDateTime:string;
   status:string;
-  owner:UserDTO;
+  creator:UserDTO;
   executor:UserDTO;
-  reportList:ReportDTO[]=[];
+  reporterList:ReporterDTO[]=[];
 }

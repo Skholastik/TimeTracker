@@ -4,7 +4,6 @@ package com.timetracker.Entities;
 import com.timetracker.Service.AncillaryServices.LocalDateTimeAttributeConverter;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -17,7 +16,7 @@ public class Project extends BaseModel {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "CREATED_BY", referencedColumnName = "ID")
-    User owner;
+    User creator;
 
     @Column(name = "CREATION_DATE")
     @Convert(converter = LocalDateTimeAttributeConverter.class)
@@ -38,7 +37,7 @@ public class Project extends BaseModel {
     @OneToMany(mappedBy = "ancestorProject", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Report> reportList;
 
-    public void addTask(Task newTask){
+    public void addTask(Task newTask) {
         newTask.setAncestorProject(this);
         taskList.add(newTask);
     }
@@ -51,12 +50,20 @@ public class Project extends BaseModel {
         this.name = name;
     }
 
-    public User getOwner() {
-        return owner;
+    public User getCreator() {
+        return creator;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setCreator(User creator) {
+        this.creator = creator;
+    }
+
+    public List<Report> getReportList() {
+        return reportList;
+    }
+
+    public void setReportList(List<Report> reportList) {
+        this.reportList = reportList;
     }
 
     public ZonedDateTime getCreationDateTime() {

@@ -23,7 +23,7 @@ export class API_Report {
     return offset.replace('+', '%2B')
   }
 
-  public createReport(report:string, workTime:string, workDate:string,taskId:string, utcOffset:string):any {
+  public createReport(report:string, workTime:string, workDate:string, taskId:string, utcOffset:string):any {
     let headers:Headers = this.getJsonHeader();
 
     let params:URLSearchParams = new URLSearchParams();
@@ -33,7 +33,7 @@ export class API_Report {
     let transferData:any = JSON.stringify({
       report: report,
       workTime: workTime,
-      workDate:workDate,
+      workDate: workDate,
     });
 
     return this.http.post('/api/report/createReport', transferData, {
@@ -41,15 +41,57 @@ export class API_Report {
     }).map(res => res.json());
   }
 
-  public getTaskAllReportList(taskId:string,utcOffset:string):any{
+  public getTaskAllReportList(taskId:string, utcOffset:string):any {
     let headers:Headers = this.getJsonHeader();
 
     let params:URLSearchParams = new URLSearchParams();
     params.set('utcOffset', this.correctOffset(utcOffset));
     params.set('taskId', taskId);
 
-    return this.http.get('/api/report/getTaskAllReportList',{
+    return this.http.get('/api/report/getTaskAllReportList', {
       headers: headers, search: params
     }).map(res => res.json());
   }
+
+  public getProjectReportList(utcOffset:string, projectId:string, userId:string,
+                              startDate:string, endDate:string):any {
+    let headers:Headers = this.getJsonHeader();
+
+    let params:URLSearchParams = new URLSearchParams();
+    params.set('utcOffset', this.correctOffset(utcOffset));
+    if (projectId.length!=0)
+      params.set('projectId', projectId);
+    if (userId.length!=0)
+      params.set('creatorId', userId);
+    if (startDate.length!=0)
+      params.set('startDate', startDate);
+    if (endDate.length!=0)
+      params.set('endDate', endDate);
+
+    return this.http.get('/api/report/getProjectReportList', {
+      headers: headers, search: params
+    }).map(res => res.json());
+  }
+
+  public getTaskReportList(utcOffset:string, projectId:string, userId:string,
+                              startDate:string, endDate:string):any {
+    let headers:Headers = this.getJsonHeader();
+
+    let params:URLSearchParams = new URLSearchParams();
+    params.set('utcOffset', this.correctOffset(utcOffset));
+    if (projectId.length!=0)
+      params.set('taskId', projectId);
+    if (userId.length!=0)
+      params.set('creatorId', userId);
+    if (startDate.length!=0)
+      params.set('startDate', startDate);
+    if (endDate.length!=0)
+      params.set('endDate', endDate);
+
+    return this.http.get('/api/report/getTaskReportList', {
+      headers: headers, search: params
+    }).map(res => res.json());
+  }
+
+
 }

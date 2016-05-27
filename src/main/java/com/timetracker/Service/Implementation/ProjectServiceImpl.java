@@ -18,10 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +44,8 @@ public class ProjectServiceImpl implements ProjectService {
         List<Project> projectList = new ArrayList<>();
 
         for (ProjectParticipants takingPartProject : projectParticipantsList) {
-            if(takingPartProject.getProject().getStatus().equals(Status.ACTIVE.getStatus()))
-            projectList.add(takingPartProject.getProject());
+            if (takingPartProject.getProject().getStatus().equals(Status.ACTIVE.getStatus()))
+                projectList.add(takingPartProject.getProject());
         }
 
         List<ProjectDTO> projectDTOList = projectListToDTOWithChangeOffset(projectList, userUtcOffset);
@@ -57,7 +57,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public ResponseEntity getCreatedProjectList(String userName, String userUtcOffset) {
         User user = userDao.findByUserName(userName);
-        List<Project> createdProjectList=user.getCreatedProjectList();
+        List<Project> createdProjectList = user.getCreatedProjectList();
         createdProjectList.size();
 
         List<ProjectDTO> projectDTOList = projectListToDTOWithChangeOffset(createdProjectList, userUtcOffset);
@@ -67,38 +67,29 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ResponseEntity createProject(String projectName, String userUtcOffset, String userName) {
-
+    public ResponseEntity createProject(String projectName, String userUtcOffset, String creatorUserName) {
         String formattedProjectName = WordProcessor.prepareWordToDB(projectName);
-        User owner = userDao.findByUserName(userName);
-        if (isProjectExist(formattedProjectName, owner)) {
+        User creator = userDao.findByUserName(creatorUserName);
+
+        if (isProjectExist(formattedProjectName, creator)) {
             ResponseMessage responseMessage = new ResponseMessage(false, "Проект с названием: " + "'"
                     + formattedProjectName + "'" + " имеется у данного пользователя");
             return new ResponseEntity<>(responseMessage, HttpStatus.NOT_ACCEPTABLE);
         }
 
         Project newProject = new Project();
+
         newProject.setName(formattedProjectName);
         ZonedDateTime serverDateTime = Instant.now().atZone(ZoneId.systemDefault());
         newProject.setCreationDateTime(serverDateTime);
-        newProject.setOwner(owner);
+        newProject.setCreator(creator);
         newProject.setStatus(Status.ACTIVE.getStatus());
 
         projectDao.createProject(newProject);
 
-        participateInProject(owner, newProject);
+        participateInProject(creator, newProject);
 
-        ProjectDTO projectDTO = new ProjectDTO();
-        projectDTO.setId(newProject.getId());
-        projectDTO.setName(newProject.getName());
-        projectDTO.setStatus(newProject.getStatus());
-        projectDTO.setOwner(new UserDTO(owner.getUserName()));
-
-        ZonedDateTime userDateTime = serverDateTime.withZoneSameInstant(ZoneOffset.of(userUtcOffset));
-        /** #toString() необходим для того, чтобы место массива строк, вернулась одна строка */
-        projectDTO.setCreationDateTime(userDateTime.toLocalDateTime()
-                .toString());
-
+        ProjectDTO projectDTO = projectToDTO(newProject, userUtcOffset);
 
         ResponseMessage responseMessage = new ResponseMessage(true, "");
         responseMessage.addResponseObject("project", projectDTO);
@@ -121,9 +112,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ResponseEntity setName(int projectId, String name, String owner) {
+    public ResponseEntity setName(int projectId, String name, String creatorUserName) {
         Project project = projectDao.getProjectById(projectId);
-        ResponseEntity<ResponseMessage> responseEntity = checkAccessToChangeProject(projectId, owner);
+        ResponseEntity<ResponseMessage> responseEntity = checkAccessToChangeProject(projectId, creatorUserName);
 
         if (responseEntity.getStatusCode() == HttpStatus.FORBIDDEN)
             return responseEntity;
@@ -133,9 +124,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ResponseEntity setDescription(int projectId, String description, String owner) {
+    public ResponseEntity setDescription(int projectId, String description, String creatorUserName) {
         Project project = projectDao.getProjectById(projectId);
-        ResponseEntity<ResponseMessage> responseEntity = checkAccessToChangeProject(projectId, owner);
+        ResponseEntity<ResponseMessage> responseEntity = checkAccessToChangeProject(projectId, creatorUserName);
 
         if (responseEntity.getStatusCode() == HttpStatus.FORBIDDEN)
             return responseEntity;
@@ -145,9 +136,9 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ResponseEntity setStatus(int projectId, String projectStatus, String owner) {
+    public ResponseEntity setStatus(int projectId, String projectStatus, String creatorUserName) {
         Project project = projectDao.getProjectById(projectId);
-        ResponseEntity<ResponseMessage> responseEntity = checkAccessToChangeProject(projectId, owner);
+        ResponseEntity<ResponseMessage> responseEntity = checkAccessToChangeProject(projectId, creatorUserName);
 
         if (responseEntity.getStatusCode() == HttpStatus.FORBIDDEN)
             return responseEntity;
@@ -161,7 +152,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectDao.getProjectById(projectId);
         ResponseMessage responseMessage = null;
 
-        if (!project.getOwner().getUserName().equals(userName)) {
+        if (!project.getCreator().getUserName().equals(userName)) {
             responseMessage = new ResponseMessage(false, "Вы не владелец проекта: " + "'"
                     + project.getName() + "'" + ", поэтому у вас нет прав для внесения изменений в проект");
             return new ResponseEntity<>(responseMessage, HttpStatus.FORBIDDEN);
@@ -190,29 +181,6 @@ public class ProjectServiceImpl implements ProjectService {
         return false;
     }
 
-    public List<ProjectDTO> projectListToDTOWithChangeOffset(List<Project> projectList, String userUtcOffset) {
-        List<ProjectDTO> projectDTOList = new ArrayList<>();
-
-        for (Project project : projectList) {
-
-            ProjectDTO newProjectDTO = new ProjectDTO();
-            newProjectDTO.setId(project.getId());
-            newProjectDTO.setName(project.getName());
-            newProjectDTO.setStatus(project.getStatus());
-            newProjectDTO.setOwner(new UserDTO(project.getOwner().getUserName()));
-
-            newProjectDTO.setCreationDateTime(project.getCreationDateTime()
-                    .withZoneSameInstant(ZoneOffset.of(userUtcOffset))
-                    .toLocalDateTime().toString());
-
-            if (project.getDescription() != null)
-                newProjectDTO.setDescription(project.getDescription());
-
-            projectDTOList.add(newProjectDTO);
-        }
-        return projectDTOList;
-    }
-
     @Override
     public void participateInProject(User user, Project project) {
         ProjectParticipants projectParticipants = new ProjectParticipants();
@@ -221,5 +189,33 @@ public class ProjectServiceImpl implements ProjectService {
         projectParticipants.setParticipant(user);
         projectParticipants.setProject(project);
     }
+
+    public List<ProjectDTO> projectListToDTOWithChangeOffset(List<Project> projectList, String userUtcOffset) {
+        List<ProjectDTO> projectDTOList = new ArrayList<>();
+
+        for (Project project : projectList)
+            projectDTOList.add(projectToDTO(project, userUtcOffset));
+
+        return projectDTOList;
+    }
+
+    public ProjectDTO projectToDTO(Project project, String userUtcOffset) {
+        ProjectDTO newProjectDTO = new ProjectDTO();
+
+        newProjectDTO.setId(project.getId());
+        newProjectDTO.setName(project.getName());
+        newProjectDTO.setStatus(project.getStatus());
+        newProjectDTO.setCreator(new UserDTO(project.getCreator().getUserName()));
+
+        newProjectDTO.setCreationDateTime(project.getCreationDateTime()
+                .withZoneSameInstant(ZoneOffset.of(userUtcOffset))
+                .toLocalDateTime().toString());
+
+        if (project.getDescription() != null)
+            newProjectDTO.setDescription(project.getDescription());
+
+        return newProjectDTO;
+    }
+
 
 }

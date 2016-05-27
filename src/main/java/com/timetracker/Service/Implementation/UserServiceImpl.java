@@ -41,6 +41,28 @@ public class UserServiceImpl implements UserService {
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity getParticipantProjectUserList(int projectId, String ownerName) {
+        List<User> projectParticipantsList=userDao.getProjectParticipantsList(projectId,ownerName);
+
+        ResponseMessage responseMessage = new ResponseMessage(true, "");
+        responseMessage.addResponseObject("userList",
+                transformUserListToDTO(projectParticipantsList));
+
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity getParticipantTaskUserList(int taskId) {
+        List<User> projectParticipantsList=userDao.getTaskParticipantsList(taskId);
+
+        ResponseMessage responseMessage = new ResponseMessage(true, "");
+        responseMessage.addResponseObject("userList",
+                transformUserListToDTO(projectParticipantsList));
+
+        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+    }
+
     public List<UserDTO> transformUserListToDTO(List<User> userList) {
         List<UserDTO> newUserDTOList = new ArrayList<>();
 

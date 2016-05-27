@@ -27,6 +27,30 @@ export class API_User {
     let headers:Headers = this.getUrlencodedHeader();
     return this.http.get('/api/user/getUserList').map(res => res.json());
   }
+
+  public getParticipantProjectUserList(projectId?:string):any {
+    let headers:Headers = this.getUrlencodedHeader();
+    let params:URLSearchParams = new URLSearchParams();
+
+    if(projectId!=undefined)
+    params.set('projectId', projectId);
+
+    return this.http.get('/api/user/getParticipantProjectUserList', {
+      headers: headers, search: params
+    }).map(res => res.json());
+  }
+
+  public getParticipantTaskUserList(taskId:string):any {
+    let headers:Headers = this.getUrlencodedHeader();
+    let params:URLSearchParams = new URLSearchParams();
+
+    params.set('taskId', taskId);
+
+    return this.http.get('/api/user/getParticipantTaskUserList', {
+      headers: headers, search: params
+    }).map(res => res.json());
+  }
+
 }
 
 

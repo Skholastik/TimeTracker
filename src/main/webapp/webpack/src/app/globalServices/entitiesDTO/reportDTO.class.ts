@@ -7,5 +7,4 @@ export class ReportDTO extends Serializable{
   workTime:string;
   workDate:string;
   creationDateTime:string;
-  creator:UserDTO;
 }

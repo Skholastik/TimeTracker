@@ -5,6 +5,8 @@ import com.timetracker.Service.AncillaryServices.CustomAnnotation.CustomStatusVa
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.groups.Default;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ProjectDTO {
 
@@ -28,7 +30,17 @@ public class ProjectDTO {
             groups = {SetStatus.class, Default.class})
     private String status;
 
-    private UserDTO owner;
+    private UserDTO creator;
+
+    Set<TaskDTO> taskList;
+
+    public void addTask(TaskDTO task) {
+
+        if (taskList == null)
+            taskList = new HashSet<>();
+
+        taskList.add(task);
+    }
 
     public Integer getId() {
         return id;
@@ -70,12 +82,36 @@ public class ProjectDTO {
         this.status = status;
     }
 
-    public UserDTO getOwner() {
-        return owner;
+    public UserDTO getCreator() {
+        return creator;
     }
 
-    public void setOwner(UserDTO owner) {
-        this.owner = owner;
+    public void setCreator(UserDTO creator) {
+        this.creator = creator;
+    }
+
+    public Set<TaskDTO> getTaskList() {
+        return taskList;
+    }
+
+    public void setTaskList(Set<TaskDTO> taskList) {
+        this.taskList = taskList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ProjectDTO)) return false;
+
+        ProjectDTO that = (ProjectDTO) o;
+
+        return getId().equals(that.getId());
+
+    }
+
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
 
     public interface CreateProject {

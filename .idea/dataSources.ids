@@ -317,7 +317,7 @@
       <column id="81" parent="7" name="ANCESTOR_TASK_ID">
         <data-type>int(11)</data-type>
       </column>
-      <column id="82" parent="7" name="CREATED_BY">
+      <column id="82" parent="7" name="REPORTER">
         <data-type>int(11)</data-type>
       </column>
       <index id="83" parent="7" name="FK3o2dop2q06rftltne39s2yics">
@@ -328,38 +328,28 @@
         <columns>ANCESTOR_PROJECT_ID</columns>
         <desc-columns></desc-columns>
       </index>
-      <index id="85" parent="7" name="FK6puoo1c4otl1idpvjrudjx95h">
-        <columns>CREATED_BY</columns>
-        <desc-columns></desc-columns>
-      </index>
-      <index id="86" parent="7" name="reports_ID_uindex">
+      <index id="85" parent="7" name="reports_ID_uindex">
         <columns>ID</columns>
         <desc-columns></desc-columns>
         <unique>1</unique>
       </index>
-      <key id="87" parent="7" name="PRIMARY">
+      <key id="86" parent="7" name="PRIMARY">
         <columns>ID</columns>
         <primary>1</primary>
       </key>
-      <key id="88" parent="7" name="reports_ID_uindex">
+      <key id="87" parent="7" name="reports_ID_uindex">
         <columns>ID</columns>
         <underlying-index>reports_ID_uindex</underlying-index>
       </key>
-      <foreign-key id="89" parent="7" name="FK3o2dop2q06rftltne39s2yics">
+      <foreign-key id="88" parent="7" name="FK3o2dop2q06rftltne39s2yics">
         <columns>ANCESTOR_TASK_ID</columns>
         <ref-key>~.tasks.PRIMARY</ref-key>
         <cascade-update-rule>restrict</cascade-update-rule>
         <cascade-delete-rule>restrict</cascade-delete-rule>
       </foreign-key>
-      <foreign-key id="90" parent="7" name="FK58fu8rt2p3ttk377xp149b91j">
+      <foreign-key id="89" parent="7" name="FK58fu8rt2p3ttk377xp149b91j">
         <columns>ANCESTOR_PROJECT_ID</columns>
         <ref-key>~.projects.PRIMARY</ref-key>
-        <cascade-update-rule>restrict</cascade-update-rule>
-        <cascade-delete-rule>restrict</cascade-delete-rule>
-      </foreign-key>
-      <foreign-key id="91" parent="7" name="FK6puoo1c4otl1idpvjrudjx95h">
-        <columns>CREATED_BY</columns>
-        <ref-key>~.users.PRIMARY</ref-key>
         <cascade-update-rule>restrict</cascade-update-rule>
         <cascade-delete-rule>restrict</cascade-delete-rule>
       </foreign-key>

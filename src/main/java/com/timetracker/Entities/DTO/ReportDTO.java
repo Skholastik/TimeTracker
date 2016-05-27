@@ -25,8 +25,6 @@ public class ReportDTO {
 
     String creationDateTime;
 
-    UserDTO creator;
-
     public Integer getId() {
         return id;
     }
@@ -67,14 +65,21 @@ public class ReportDTO {
         this.creationDateTime = creationDateTime;
     }
 
-    public UserDTO getCreator() {
-        return creator;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ReportDTO)) return false;
+
+        ReportDTO reportDTO = (ReportDTO) o;
+
+        return getId().equals(reportDTO.getId());
+
     }
 
-    public void setCreator(UserDTO creator) {
-        this.creator = creator;
+    @Override
+    public int hashCode() {
+        return getId().hashCode();
     }
-
 
     public interface CreateReport {
     }

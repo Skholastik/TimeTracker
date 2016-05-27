@@ -8,9 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.ZonedDateTime;
 
 
 @RestController
@@ -22,63 +23,67 @@ public class ProjectAPI {
     ProjectService projectService;
 
     @RequestMapping(value = "/getUserActiveProjectList", method = RequestMethod.GET)
-    public ResponseEntity getUserProjectList(@RequestParam
-                                             @NotBlank(message = "Необходимо указать вашу временную зону (UTC)")
-                                             String utcOffset) {
-        String userName = getPrincipalName();
-        return projectService.getUserActiveProjectList(userName, utcOffset);
+    public ResponseEntity getUserProjectList(@RequestParam(defaultValue = "0") String utcOffset) {
+
+        if (utcOffset.equals("0"))
+            utcOffset = getCurrentOffset();
+
+        return projectService.getUserActiveProjectList(getPrincipalName(), utcOffset);
     }
 
     @RequestMapping(value = "/getCreatedProjectList", method = RequestMethod.GET)
-    public ResponseEntity getCreatedProjectList(@RequestParam
-                                                @NotBlank(message = "Необходимо указать вашу временную зону (UTC)")
-                                                String utcOffset) {
-        String userName = getPrincipalName();
-        return projectService.getCreatedProjectList(userName, utcOffset);
+    public ResponseEntity getCreatedProjectList(@RequestParam(defaultValue = "0") String utcOffset) {
+
+        if (utcOffset.equals("0"))
+            utcOffset = getCurrentOffset();
+
+        return projectService.getCreatedProjectList(getPrincipalName(), utcOffset);
     }
 
     @RequestMapping(value = "/createProject", method = RequestMethod.POST)
-    public ResponseEntity createProject(@NotBlank(message = "Необходимо указать вашу временную зону (UTC)")
-                                        @RequestParam String utcOffset,
+    public ResponseEntity createProject(@RequestParam(defaultValue = "0") String utcOffset,
                                         @RequestBody
                                         @Validated({ProjectDTO.CreateProject.class}) ProjectDTO transferProject) {
-        String userName = getPrincipalName();
-        return projectService.createProject(transferProject.getName(), utcOffset, userName);
+
+        if (utcOffset.equals("0"))
+            utcOffset = getCurrentOffset();
+
+        return projectService.createProject(transferProject.getName(), utcOffset, getPrincipalName());
     }
 
     @RequestMapping(value = "/checkNameInDB", method = RequestMethod.GET)
     public ResponseEntity checkNameInDB(@RequestBody
-                                               @Validated({ProjectDTO.CheckNameInDB.class}) ProjectDTO project) {
-        String userName = getPrincipalName();
-        return projectService.checkNameInDB(project.getName(), userName);
+                                        @Validated({ProjectDTO.CheckNameInDB.class}) ProjectDTO project) {
+
+        return projectService.checkNameInDB(project.getName(), getPrincipalName());
     }
 
     @RequestMapping(value = "/setName", method = RequestMethod.PUT)
     public ResponseEntity setName(@RequestBody
                                   @Validated({ProjectDTO.SetName.class}) ProjectDTO project) {
-        String owner = getPrincipalName();
-        return projectService.setName(project.getId(), project.getName(), owner);
+
+        return projectService.setName(project.getId(), project.getName(), getPrincipalName());
     }
 
     @RequestMapping(value = "/setDescription", method = RequestMethod.PUT)
     public ResponseEntity setDescription(@RequestBody
-                                                @Validated({ProjectDTO.SetDescription.class}) ProjectDTO project) {
-        String owner = getPrincipalName();
-        return projectService.setDescription(project.getId(), project.getDescription(), owner);
+                                         @Validated({ProjectDTO.SetDescription.class}) ProjectDTO project) {
+
+        return projectService.setDescription(project.getId(), project.getDescription(), getPrincipalName());
     }
 
     @RequestMapping(value = "/setStatus", method = RequestMethod.PUT)
     public ResponseEntity setStatus(@RequestBody
-                                           @Validated({ProjectDTO.SetStatus.class}) ProjectDTO project) {
-        String owner = getPrincipalName();
-        return projectService.setStatus(project.getId(), project.getStatus(), owner);
+                                    @Validated({ProjectDTO.SetStatus.class}) ProjectDTO project) {
+
+        return projectService.setStatus(project.getId(), project.getStatus(), getPrincipalName());
     }
 
     @RequestMapping(value = "/checkAccessToChangeProject", method = RequestMethod.GET)
     public ResponseEntity checkAccessToChangeProject(@NotBlank(message = "Необходимо указать ID проекта")
                                                      @RequestParam Integer id) {
-        String userName = getPrincipalName();
-        return projectService.checkAccessToChangeProject(id, userName);
+
+        return projectService.checkAccessToChangeProject(id, getPrincipalName());
     }
 
 
@@ -92,6 +97,10 @@ public class ProjectAPI {
             userName = principal.toString();
         }
         return userName;
+    }
+
+    public String getCurrentOffset() {
+        return ZonedDateTime.now().getOffset().toString();
     }
 
 }

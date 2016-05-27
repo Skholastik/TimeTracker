@@ -26,24 +26,36 @@ public class UserDaoImpl implements UserDao {
                 .setParameter("userName", userName)
                 .getResultList();
         Iterator iterator = list.iterator();
-        if (iterator.hasNext()) {
+
+        if (iterator.hasNext())
             user = (User) iterator.next();
 
-        }
         return user;
 
     }
 
     @Override
     public List<User> getUserList() {
-        return entityManager.createQuery("FROM User",User.class).getResultList();
+        return entityManager.createQuery("FROM User", User.class).getResultList();
     }
 
-    public EntityManager getEntityManager() {
-        return entityManager;
+    @Override
+    public List<User> getProjectParticipantsList(int projectId, String ownerName) {
+
+        if (projectId != 0)
+            return entityManager.createQuery("SELECT p.participant FROM ProjectParticipants p WHERE p.project.id=:id ", User.class)
+                    .setParameter("id", projectId).getResultList();
+
+        else
+            return entityManager.createQuery("SELECT DISTINCT p.participant FROM ProjectParticipants p WHERE p.project.creator.userName=:name ", User.class)
+                    .setParameter("name", ownerName).getResultList();
     }
 
-    public void setEntityManager(EntityManager entityManager) {
-        this.entityManager = entityManager;
+    @Override
+    public List<User> getTaskParticipantsList(int taskId) {
+
+            return entityManager.createQuery("SELECT r.creator FROM Report r WHERE r.ancestorTask.id=:id ", User.class)
+                    .setParameter("id", taskId).getResultList();
     }
+
 }

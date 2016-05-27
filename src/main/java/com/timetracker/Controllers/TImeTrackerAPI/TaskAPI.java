@@ -13,25 +13,26 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
+
 @RestController
 @PreAuthorize("hasAnyRole('ADMIN','USER')")
 @RequestMapping(value = "/api/task", produces = "application/json;charset=UTF-8")
 public class TaskAPI {
 
-
     @Autowired
     TaskService taskService;
 
-
     @RequestMapping(value = "/createTask", method = RequestMethod.POST)
-    public ResponseEntity createTask(@NotBlank(message = "Необходимо указать вашу временную зону (UTC)")
-                                     @RequestParam String utcOffset,
+    public ResponseEntity createTask(@RequestParam(defaultValue = "0") String utcOffset,
                                      @RequestBody
                                      @Validated({ProjectDTO.CreateProject.class}) TaskDTO transferTask) {
 
-        String userName = getPrincipalName();
+        if (utcOffset.equals("0"))
+            utcOffset = getCurrentOffset();
+
         return taskService.createTask(transferTask.getName(), transferTask.getAncestorProjectId(),
-                utcOffset, userName);
+                utcOffset, getPrincipalName());
     }
 
     @RequestMapping(value = "/addTaskExecutor", method = RequestMethod.PUT)
@@ -40,25 +41,28 @@ public class TaskAPI {
                                           @RequestBody
                                           @Validated({UserDTO.AddTaskExecutor.class}) UserDTO transferUser) {
 
-        String owner = getPrincipalName();
-        return taskService.addTaskExecutor(taskId, transferUser.getId(), owner);
+        return taskService.addTaskExecutor(taskId, transferUser.getId(), getPrincipalName());
+
     }
 
     @RequestMapping(value = "/getProjectHighTaskList", method = RequestMethod.GET)
-    public ResponseEntity getProjectHighTaskList(@NotBlank(message = "Необходимо указать вашу временную зону (UTC)")
-                                                 @RequestParam String utcOffset,
+    public ResponseEntity getProjectHighTaskList(@RequestParam(defaultValue = "0") String utcOffset,
                                                  @NotBlank(message = "Необходимо указать ID родительского проекта")
                                                  @RequestParam int projectId) {
+
+        if (utcOffset.equals("0"))
+            utcOffset = getCurrentOffset();
 
         return taskService.getProjectHighTaskList(projectId, utcOffset);
     }
 
     @RequestMapping(value = "/getCreatedTaskList", method = RequestMethod.GET)
-    public ResponseEntity getCreatedTaskList(@NotBlank(message = "Необходимо указать вашу временную зону (UTC)")
-                                             @RequestParam String utcOffset) {
+    public ResponseEntity getCreatedTaskList(@RequestParam(defaultValue = "0") String utcOffset) {
 
-        String userName = getPrincipalName();
-        return taskService.getCreatedTaskList(userName, utcOffset);
+        if (utcOffset.equals("0"))
+            utcOffset = getCurrentOffset();
+
+        return taskService.getCreatedTaskList(getPrincipalName(), utcOffset);
     }
 
     @RequestMapping(value = "/checkNameInDB", method = RequestMethod.GET)
@@ -73,29 +77,29 @@ public class TaskAPI {
     @RequestMapping(value = "/setName", method = RequestMethod.PUT)
     public ResponseEntity setName(@RequestBody
                                   @Validated({TaskDTO.SetName.class}) TaskDTO task) {
-        String owner = getPrincipalName();
-        return taskService.setName(task.getId(), task.getName(), owner);
+
+        return taskService.setName(task.getId(), task.getName(), getPrincipalName());
     }
 
     @RequestMapping(value = "/setDescription", method = RequestMethod.PUT)
     public ResponseEntity setDescription(@RequestBody
                                          @Validated({TaskDTO.SetDescription.class}) TaskDTO task) {
-        String userName = getPrincipalName();
-        return taskService.setDescription(task.getId(), task.getDescription(), userName);
+
+        return taskService.setDescription(task.getId(), task.getDescription(), getPrincipalName());
     }
 
     @RequestMapping(value = "/setStatus", method = RequestMethod.PUT)
     public ResponseEntity setStatus(@RequestBody
                                     @Validated({ProjectDTO.SetStatus.class}) TaskDTO task) {
-        String userName = getPrincipalName();
-        return taskService.setStatus(task.getId(), task.getStatus(), userName);
+
+        return taskService.setStatus(task.getId(), task.getStatus(), getPrincipalName());
     }
 
     @RequestMapping(value = "/checkLowLevelAuthorities", method = RequestMethod.GET)
     public ResponseEntity checkLowLevelAuthorities(@NotBlank(message = "Необходимо указать ID задачи")
                                                    @RequestParam Integer id) {
-        String userName = getPrincipalName();
-        return taskService.checkLowLevelAuthorities(id, userName);
+
+        return taskService.checkLowLevelAuthorities(id, getPrincipalName());
     }
 
 
@@ -109,6 +113,10 @@ public class TaskAPI {
             userName = principal.toString();
         }
         return userName;
+    }
+
+    public String getCurrentOffset() {
+        return ZonedDateTime.now().getOffset().toString();
     }
 
 }
