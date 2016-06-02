@@ -1,6 +1,7 @@
 package com.timetracker.Controllers.TImeTrackerAPI;
 
 import com.timetracker.Entities.DTO.ReportDTO;
+import com.timetracker.Service.AncillaryServices.CustomAnnotation.CustomReportTypeValid;
 import com.timetracker.Service.Interfaces.ReportService;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,42 +36,30 @@ public class ReportAPI {
                 transferReport.getWorkDate(), taskId, utcOffset, getPrincipalName());
     }
 
-    @RequestMapping(value = "/getTaskAllReportList", method = RequestMethod.GET)
-    public ResponseEntity getTaskAllReportList(@RequestParam(defaultValue = "0") String utcOffset,
-                                               @NotBlank(message = "Необходимо указать ID задачи")
-                                               @RequestParam int taskId) {
+    @RequestMapping(value = "/getTaskReporterList", method = RequestMethod.GET)
+    public ResponseEntity getTaskReporterList(@RequestParam(defaultValue = "0") String utcOffset,
+                                              @NotBlank(message = "Необходимо указать ID задачи")
+                                              @RequestParam int taskId) {
 
         if (utcOffset.equals("0"))
             utcOffset = getCurrentOffset();
 
-        return reportService.getTaskAllReportList(taskId, utcOffset);
+        return reportService.getTaskReporterList(taskId, utcOffset);
     }
 
-    @RequestMapping(value = "/getProjectReportList", method = RequestMethod.GET)
-    public ResponseEntity getProjectReportList(@RequestParam(defaultValue = "0") String projectId,
-                                               @RequestParam(defaultValue = "0") String creatorId,
-                                               @RequestParam(defaultValue = "0") String startDate,
-                                               @RequestParam(defaultValue = "0") String endDate,
-                                               @RequestParam(defaultValue = "0") String utcOffset) {
+    @RequestMapping(value = "/getReportList", method = RequestMethod.GET)
+    public ResponseEntity getReportList(@CustomReportTypeValid
+                                        @RequestParam Integer reportType,
+                                        @RequestParam(defaultValue = "0") String projectOrTaskId,
+                                        @RequestParam(defaultValue = "0") String creatorId,
+                                        @RequestParam(defaultValue = "0") String startDate,
+                                        @RequestParam(defaultValue = "0") String endDate,
+                                        @RequestParam(defaultValue = "0") String utcOffset) {
 
         if (utcOffset.equals("0"))
             utcOffset = getCurrentOffset();
 
-        return reportService.getProjectReportList(getPrincipalName(), Integer.parseInt(projectId), Integer.parseInt(creatorId),
-                startDate, endDate, utcOffset);
-    }
-
-    @RequestMapping(value = "/getTaskReportList", method = RequestMethod.GET)
-    public ResponseEntity getTaskReportList(@RequestParam(defaultValue = "0") String taskId,
-                                            @RequestParam(defaultValue = "0") String creatorId,
-                                            @RequestParam(defaultValue = "0") String startDate,
-                                            @RequestParam(defaultValue = "0") String endDate,
-                                            @RequestParam(defaultValue = "0") String utcOffset) {
-
-        if (utcOffset.equals("0"))
-            utcOffset = getCurrentOffset();
-
-        return reportService.getTaskReportList(getPrincipalName(), Integer.parseInt(taskId), Integer.parseInt(creatorId),
+        return reportService.getReportList(reportType, getPrincipalName(), Integer.parseInt(projectOrTaskId), Integer.parseInt(creatorId),
                 startDate, endDate, utcOffset);
     }
 

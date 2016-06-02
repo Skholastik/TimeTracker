@@ -4,7 +4,6 @@ import com.timetracker.Entities.User;
 import com.timetracker.Entities.UserRoles;
 import com.timetracker.Service.Interfaces.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,13 +21,11 @@ public class UserDetailServiceImpl implements UserDetailsService {
 
 
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-
         User user = service.findByUserName(username);
+
         if (user == null)
             throw new UsernameNotFoundException("User name not found");
 
-        System.out.println(user);
         return buildUserFromUserEntity(user);
     }
 
@@ -42,7 +39,6 @@ public class UserDetailServiceImpl implements UserDetailsService {
         boolean accountNonLocked = true;
         UserRoles role = user.getRole();
         List<UserRoles> roles = new ArrayList<UserRoles>();
-        System.out.println(role);
         roles.add(role);
 
         return new org.springframework.security.core.userdetails.User(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, roles);

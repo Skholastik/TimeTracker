@@ -1,6 +1,7 @@
 import {Component,Input} from '@angular/core';
 
 import {TaskDTO} from '../../../globalServices/entitiesDTO/taskDTO.class';
+import {ReporterDTO} from '../../../globalServices/entitiesDTO/reporterDTO.class';
 import {ReportDTO} from '../../../globalServices/entitiesDTO/reportDTO.class';
 import {UserDTO} from '../../../globalServices/entitiesDTO/userDTO.class';
 import {ReportBar} from '../reportBar/reportBar.component'
@@ -21,6 +22,7 @@ import {DateFormatter} from '../../../globalServices/dateFromatter/dateFormatter
 export class TaskManagement {
 
   @Input() task:TaskDTO;
+
   private userList:UserDTO[] = [];
 
   private selectedUserName:string;
@@ -44,8 +46,15 @@ export class TaskManagement {
   }
 
   ngOnInit() {
-    this.getTaskAllReportList();
-    this.getUserList();
+    if (this.task.executor == undefined)
+      this.getUserList();
+  }
+
+  ngOnChanges() {
+    if (this.task.reporterList.length == 0)
+      this.getTaskReporterList();
+    if (this.task.executor == undefined)
+      this.getUserList();
   }
 
 
@@ -73,7 +82,7 @@ export class TaskManagement {
       this.showTaskNameInput = true;
 
     else {
-      this.api_Task.checkLowLevelAuthorities(this.task.id).subscribe(
+      this.api_Task.checkHighLevelAuthorities(this.task.id).subscribe(
         data=> {
           console.log(data);
           this.showTaskNameInput = true;
@@ -101,6 +110,26 @@ export class TaskManagement {
       );
     }
     this.isStatusBarOpen = this.isStatusBarOpen == false;
+  }
+
+  public checkAccessToChangeStatus() {
+    if (this.accessToChangeTask) {
+      this.isStatusBarOpen = true;
+    }
+    else {
+      this.api_Task.checkLowLevelAuthorities(this.task.id).subscribe(
+        data=> {
+          console.log(data);
+          this.isStatusBarOpen = true;
+          this.accessToChangeTask = true;
+        },
+        error=> {
+          console.log(error);
+          this.isStatusBarOpen = false;
+
+        }
+      );
+    }
   }
 
   public checkAccessToCreateSubTask():void {
@@ -162,12 +191,6 @@ export class TaskManagement {
     }
   }
 
-
-  public openCloseStatusBar(status:string):void {
-    this.statusBarValue = status;
-    this.isStatusBarOpen = this.isStatusBarOpen == false;
-  }
-
   public openCloseReportBar():void {
 
     if (this.accessToChangeTask) {
@@ -188,11 +211,11 @@ export class TaskManagement {
     }
   }
 
-  getTaskAllReportList() {
-    this.api_Report.getTaskAllReportList(this.task.id, this.dateFormatter.getUtcOffset()).subscribe(
+  getTaskReporterList() {
+    this.api_Report.getTaskReporterList(this.task.id, this.dateFormatter.getUtcOffset()).subscribe(
       data=> {
         console.log(data);
-        this.pushTransferReportListToProject(data.responseObjects.reportList);
+        this.pushTransferReporterListToProject(data.responseObjects.reporterList);
       },
       error=> {
         console.log(error);
@@ -201,20 +224,32 @@ export class TaskManagement {
   }
 
   public reportCreated(event) {
+    let reporter:ReporterDTO = event.reporter;
+    let existingReporter = this.task.reporterList.find(reporter => reporter.name === reporter.name);
+
+    if (existingReporter != undefined)
+      for (let i = 0; i < reporter.reportList.length; i++)
+        existingReporter.reportList.push(reporter.reportList[i]);
+    else
+      this.task.reporterList.push(reporter);
+
     this.showReportBar = false;
-    console.log(event);
   }
 
 
   /** Трансформирует входящий массив отчетов в DTO объект, с изменением формата времени*/
-  pushTransferReportListToProject(data:any[]):void {
+  pushTransferReporterListToProject(data:any[]):void {
+
     for (let i = 0; i < data.length; i++) {
-      let newReportDTO = new ReportDTO();
-      newReportDTO.fillFromJSON(JSON.stringify(data[i]));
-      newReportDTO.workTime = this.dateFormatter.transformTime(newReportDTO.workTime);
-      newReportDTO.creationDateTime = this.dateFormatter
-        .changeDateTimeToRuWithPattern(newReportDTO.creationDateTime, "Do MMMM YYYY");
-      this.task.reportList.push(newReportDTO);
+      let newReporterDTO = new ReporterDTO();
+      newReporterDTO.fillFromJSON(JSON.stringify(data[i]));
+
+      for (let z = 0; z < newReporterDTO.reportList.length; z++) {
+        newReporterDTO.reportList[z].workTime = this.dateFormatter.transformTime(newReporterDTO.reportList[z].workTime);
+        newReporterDTO.reportList[z].creationDateTime = this.dateFormatter
+          .changeDateTimeToRuWithPattern(newReporterDTO.reportList[z].creationDateTime, "Do MMMM YYYY");
+      }
+      this.task.reporterList.push(newReporterDTO);
     }
   }
 
@@ -236,9 +271,9 @@ export class TaskManagement {
       this.api_Task.addTaskExecutor(this.task.id, this.selectedUser.id).subscribe(
         data=> {
           console.log(data);
-          let newExecutor=new UserDTO();
+          let newExecutor = new UserDTO();
           newExecutor.fillFromJSON(JSON.stringify(data.responseObjects.executor))
-          this.task.executor=newExecutor;
+          this.task.executor = newExecutor;
 
         },
         error=> {
@@ -251,7 +286,7 @@ export class TaskManagement {
   }
 
   userSelected():void {
-    this.selectedUser = this.userList.find(user => user.name === this.selectedUserName);
+    this.selectedUser = this.userList.find(user => user.userName === this.selectedUserName);
   }
 
   pushTransferUserListToListDTO(data:any[]):void {

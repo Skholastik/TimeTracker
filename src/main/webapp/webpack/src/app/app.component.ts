@@ -1,12 +1,12 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 import {RouteConfig, Router} from '@angular/router-deprecated';
 
-import {TimeTracker} from './timeTracker/timeTracker.component';
+import {Login} from './login/login.component';
 
 @Component({
   selector: 'app',
   pipes: [ ],
-  providers: [TimeTracker],
+  providers: [Login],
   directives: [  ],
   encapsulation: ViewEncapsulation.Native,
   styles: [require('./app.css')],
@@ -14,19 +14,14 @@ import {TimeTracker} from './timeTracker/timeTracker.component';
 
 })
 @RouteConfig([
-  { path: '/...',  name: 'TimeTracker',  component: TimeTracker, useAsDefault: true },
-  { path: '/login', name: 'Login', loader: () => require('es6-promise!./login/login.component')('Login') }
+  { path: '/timeTracker/...', name: 'TimeTracker', loader: () => require('es6-promise!./timeTracker/timeTracker.component')('TimeTracker') },
+  { path: '/login', name: 'Login',  component: Login, useAsDefault: true }
 ])
+
 export class App {
 
-  constructor() {
-  /*  setInterval(() => {
-      this.determinateValue += 1;
-      if (this.determinateValue > 100)
-        this.determinateValue = 1;
-    }, 100, 0, true);*/
-  }
+  constructor() { }
 
-  ngOnInit() {}
+  public ngOnInit():void {}
 }
 

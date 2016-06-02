@@ -3,6 +3,7 @@ package com.timetracker.DAO.Implementation;
 
 import com.timetracker.DAO.Interfaces.UserDao;
 import com.timetracker.Entities.User;
+import com.timetracker.Entities.UserRoles;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -43,7 +44,7 @@ public class UserDaoImpl implements UserDao {
     public List<User> getProjectParticipantsList(int projectId, String ownerName) {
 
         if (projectId != 0)
-            return entityManager.createQuery("SELECT p.participant FROM ProjectParticipants p WHERE p.project.id=:id ", User.class)
+            return entityManager.createQuery("SELECT DISTINCT p.participant FROM ProjectParticipants p WHERE p.project.id=:id ", User.class)
                     .setParameter("id", projectId).getResultList();
 
         else
@@ -54,8 +55,18 @@ public class UserDaoImpl implements UserDao {
     @Override
     public List<User> getTaskParticipantsList(int taskId) {
 
-            return entityManager.createQuery("SELECT r.creator FROM Report r WHERE r.ancestorTask.id=:id ", User.class)
+            return entityManager.createQuery("SELECT DISTINCT r.reporter FROM Report r WHERE r.ancestorTask.id=:id ", User.class)
                     .setParameter("id", taskId).getResultList();
+    }
+
+    @Override
+    public void createUser(User newUser) {
+        entityManager.persist(newUser);
+    }
+
+    @Override
+    public UserRoles getUserRole() {
+        return entityManager.find(UserRoles.class,2);
     }
 
 }

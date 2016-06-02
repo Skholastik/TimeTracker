@@ -1,6 +1,6 @@
 <form id="reportForm"
       [ngFormModel]="reportForm"
-      (ngSubmit)="createReport(reportForm.value)">
+      (ngSubmit)="getReport(reportForm.value)">
 
   <div id="reportType">
     <select [ngFormControl]="reportForm.controls['reportType']"
@@ -72,7 +72,7 @@
       <template [ngIf]="reportForm.value.reportType!= '' ">
         <option [value]="user.id"
                 *ngFor="let user of participantList">
-          {{user.name}}
+          {{user.userName}}
         </option>
       </template>
     </select>
@@ -99,10 +99,12 @@
 
 
 <div id="report-show-bar">
-  <report-show-bar
-    [reportList]="reportList">
 
+  <report-show-bar
+    [reportProjectList]="reportProjectList"
+    [reportCreated]="reportCreated">
   </report-show-bar>
+
 </div>
 
 

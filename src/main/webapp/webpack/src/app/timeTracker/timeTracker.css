@@ -75,6 +75,10 @@ main .helper a {
   margin-bottom: 0;
 }
 
+.menu #logout-button{
+  background-color: rgba(26, 177, 136, 1);
+}
+
 .menu ul {
   list-style: none;
   padding: 0.5em 0;

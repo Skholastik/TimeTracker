@@ -14,11 +14,8 @@ public class TaskDTO {
     @CustomIDValid(groups = {SetName.class, SetDescription.class, SetStatus.class, Default.class})
     private Integer id;
 
-    @CustomIDValid(groups = {Default.class})
-    private Integer ancestorProjectId;
-
     @NotBlank(message = "Необходимо заполнить название проекта",
-            groups = {SetName.class, Default.class})
+            groups = {CreateTask.class, SetName.class, Default.class})
     private String name;
 
     @NotBlank(message = "Необходимо заполнить описание проекта",
@@ -39,13 +36,9 @@ public class TaskDTO {
 
     private UserDTO executor;
 
-    private Set<ReporterDTO> reporterList;
+    private Set<ReporterDTO> reporterList = new HashSet<>();
 
     public void addReporter(ReporterDTO reporter) {
-
-        if (reporterList == null)
-            reporterList = new HashSet<>();
-
         reporterList.add(reporter);
     }
 
@@ -55,14 +48,6 @@ public class TaskDTO {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getAncestorProjectId() {
-        return ancestorProjectId;
-    }
-
-    public void setAncestorProjectId(Integer ancestorProjectId) {
-        this.ancestorProjectId = ancestorProjectId;
     }
 
     public String getName() {
@@ -137,6 +122,7 @@ public class TaskDTO {
         this.reporterList = reporterList;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -150,9 +136,13 @@ public class TaskDTO {
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        return id == null ? 0 : id.hashCode();
+
     }
 
+    public interface CreateTask {
+
+    }
 
     public interface SetName {
     }

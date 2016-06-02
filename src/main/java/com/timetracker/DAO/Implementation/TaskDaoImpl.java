@@ -21,7 +21,7 @@ public class TaskDaoImpl implements TaskDao {
 
     @Override
     public Task getTaskById(int taskId) {
-        return entityManager.find(Task.class,taskId);
+        return entityManager.find(Task.class, taskId);
     }
 
     @Override
@@ -29,5 +29,12 @@ public class TaskDaoImpl implements TaskDao {
 
         return entityManager.createQuery("FROM Task t WHERE t.ancestorProject.id=:projectId AND t.ancestorTask.id=null ", Task.class)
                 .setParameter("projectId", projectId).getResultList();
+    }
+
+    @Override
+    public List<Task> getCreatedTaskList(String creatorUserName) {
+        return entityManager.createQuery("FROM Task t WHERE t.creator.userName=:creatorUserName", Task.class)
+                .setParameter("creatorUserName", creatorUserName)
+                .getResultList();
     }
 }

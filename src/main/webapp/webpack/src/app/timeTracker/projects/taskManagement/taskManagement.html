@@ -18,13 +18,13 @@
       Создана: {{task.creationDateTime}}
     </div>
 
-    <div id="owner-name-bar">
-      ( Владелец : {{task.owner.name}} )
+    <div id="creator-name-bar">
+      ( Владелец : {{task.creator.userName}} )
     </div>
 
     <div id="executor-name-bar">
       <span *ngIf="task.executor!=undefined">
-        ( Исполнитель : {{task.executor.name}} )
+        ( Исполнитель : {{task.executor.userName}} )
       </span>
       <span *ngIf="task.executor==undefined">
         Исполнитель не назначен
@@ -34,7 +34,7 @@
 
   <div id="second-level">
     <div id="status-bar">
-      <div (click)="openCloseStatusBar()">
+      <div (click)="checkAccessToChangeStatus()">
         <span>{{task.status}}</span>
         <img src="https://cdn4.iconfinder.com/data/icons/geomicons/32/672341-triangle-down-128.png" width="5%">
       </div>
@@ -63,9 +63,17 @@
     <div id="add-executor-bar">
       <select [(ngModel)]="selectedUserName"
               (ngModelChange)="userSelected()">
-        <option selected>Выбрать Исполнителя</option>
-        <option *ngFor=" let user of userList">{{user.name}}
-      </option>
+        <option selected *ngIf="task.executor!=undefined">
+          Исполнитель уже назначен
+        </option>
+        <option selected *ngIf="task.executor==undefined">
+          Выбрать Исполнителя
+        </option>
+        <template [ngIf]="task.executor==undefined">
+          <option *ngFor="let user of userList">
+            {{user.userName}}
+          </option>
+        </template>
       </select>
       <button md-raised-button class="md-raised md-primary"
               (click)="addTaskExecutor()">
@@ -75,9 +83,6 @@
   </div>
 
   <div id="third-level">
-    <!--  <div id="select-end-date">
-        <span>Выбрать дату окончания</span>
-      </div>-->
     <div id="add-sub-task">
 
       <div id="create-sub-task-bar"
@@ -97,18 +102,6 @@
 
     </div>
   </div>
-
-  <!--  <div id="fourth-level">
-      <div id="sub-task-list">
-        <ul>
-          <li *ngFor="let task of project.taskList"
-              (click)="moveToTask(task)">
-            <span>{{task.name}}</span>
-          </li>
-        </ul>
-      </div>
-    </div>-->
-
 
   <div id="fifth-level">
     <span id="description-span">Описание:</span>
@@ -139,14 +132,20 @@
   <div id="sixth-level">
     <div id="report-bar">
       <ul>
-        <li *ngFor="let report of task.reportList">
-          <div id="report-bar-header">
-            <div id="author"> Автор: {{report.creator.name}}</div>
-            <div id="creation-date">Создан:{{report.creationDateTime}}</div>
-          </div>
-          <div id="report">{{report.report}}</div>
-          <div id="spend-time">Времени затрачено: {{report.workTime}}
-            за {{report.workDate}}
+        <li *ngFor="let reporter of task.reporterList">
+          <div *ngFor="let report of reporter.reportList">
+            <div id="report-bar-header">
+              <div id="author">
+                Автор: {{reporter.name}}
+              </div>
+              <div id="creation-date">
+                Создан:{{report.creationDateTime}}
+              </div>
+            </div>
+            <div id="report">{{report.report}}</div>
+            <div id="spend-time">Времени затрачено: {{report.workTime}}
+              за {{report.workDate}}
+            </div>
           </div>
         </li>
       </ul>

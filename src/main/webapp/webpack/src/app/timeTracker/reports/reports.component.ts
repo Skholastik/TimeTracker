@@ -31,10 +31,10 @@ export class Reports {
   private projectList:ProjectDTO[] = [];
   private taskList:TaskDTO[] = [];
   private participantList:UserDTO[] = [];
-  private reportList:any[];
   private reportProjectList:ProjectDTO[] = [];
+  private reportCreated:string='false';
 
-  reportForm:ControlGroup;
+  private reportForm:ControlGroup;
 
   constructor(private api_Report:API_Report,
               private api_Project:API_Project,
@@ -55,49 +55,31 @@ export class Reports {
     });
   }
 
-  public createReport(value:any):void {
-    if (value.reportType == this.reportTypeList[0]) {
-      if (this.participantList.length == 0)
+  public getReport(value:any):void {
+
+    if(this.reportProjectList.length!=0)
+      this.reportProjectList.splice(0);
+
+    if (this.participantList.length != 0){
+      this.api_Report.getReportList(this.dateFormatter.getUtcOffset(),value.reportType, value.projectOrTaskId,
+        value.userId, value.startDate, value.endDate).subscribe(
+        data => {
+          this.fillDetailReportProjectList(data.responseObjects.reportProjectList);
+          this.reportCreated='true';
+        },
+        error => {
+          console.log(error);
+        }
+      );
+    }
+
+    else{
+
+      if (value.reportType == this.reportTypeList[0])
         console.log('Отчеты по проектам отсутствуют, т.к нету исполнителей');
       else
-        this.createProjectReport(value);
-    }
-
-    if (value.reportType == this.reportTypeList[1]) {
-      if (this.participantList.length == 0)
         console.log('Отчеты по задачам отсутствуют, т.к нету исполнителей');
-      else
-        this.createTaskReport(value);
-
     }
-  }
-
-  public createProjectReport(value:any):void {
-    this.api_Report.getProjectReportList(this.dateFormatter.getUtcOffset(), value.projectOrTaskId,
-      value.userId, value.startDate, value.endDate).subscribe(
-      data => {
-        console.log(data);
-        this.reportList = data.responseObjects.reportProjectList;
-        this.fillDetailReportProjectList(data.responseObjects.reportProjectList);
-        console.log(this.reportProjectList);
-      },
-      error => {
-        console.log(error);
-      }
-    );
-  }
-
-  public createTaskReport(value:any):void {
-    this.api_Report.getTaskReportList(this.dateFormatter.getUtcOffset(), value.projectOrTaskId,
-      value.userId, value.startDate, value.endDate).subscribe(
-      data => {
-        console.log(data);
-        this.reportList = data.responseObjects.reportList;
-      },
-      error => {
-        console.log(error);
-      }
-    );
   }
 
   /** Загружает массив доступных проектов либо заданий для данного пользователя,
@@ -120,7 +102,6 @@ export class Reports {
 
     this.api_Project.getCreatedProjectList(this.dateFormatter.getUtcOffset()).subscribe(
       data => {
-        console.log(data);
         this.pushTransferProjectListToDTO(data.responseObjects.projectList);
       },
       error => {
@@ -133,7 +114,6 @@ export class Reports {
 
     this.api_Task.getCreatedTaskList(this.dateFormatter.getUtcOffset()).subscribe(
       data => {
-        console.log(data);
         this.pushTransferTaskListToDTO(data.responseObjects.taskList);
       },
       error => {
@@ -215,30 +195,26 @@ export class Reports {
       let newProjectDTO:ProjectDTO = new ProjectDTO();
       newProjectDTO.id = data[i].id;
       newProjectDTO.name = data[i].name;
-      console.log(newProjectDTO);
 
       for (let x = 0; x < data[i].taskList.length; x++) {
         let newTaskDTO:TaskDTO = new TaskDTO();
         newTaskDTO.id = data[i].taskList[x].id;
         newTaskDTO.name = data[i].taskList[x].name;
-        console.log(newTaskDTO);
 
         for (let z = 0; z < data[i].taskList[x].reporterList.length; z++) {
           let newReporterDTO:ReporterDTO = new ReporterDTO();
-          newReporterDTO.id = data[z].taskList[x].reporterList[z].id;
+          newReporterDTO.id = data[i].taskList[x].reporterList[z].id;
           newReporterDTO.name = data[i].taskList[x].reporterList[z].name;
           newReporterDTO.taskElapsedTime = data[i].taskList[x].reporterList[z].taskElapsedTime;
-          console.log(newReporterDTO);
 
-          for (let y = 0; y < data[i].taskList[x].reporterList[z].reportList.length; z++) {
+          for (let y = 0; y < data[i].taskList[x].reporterList[z].reportList.length; y++) {
             let newReportDTO:ReportDTO = new ReportDTO();
             newReportDTO.fillFromJSON(JSON.stringify(data[i].taskList[x].reporterList[z].reportList[y]));
+            newReportDTO.workTime=this.dateFormatter.transformTime(newReportDTO.workTime);
             newReportDTO.creationDateTime = this.dateFormatter
               .changeDateTimeToRuWithPattern(newReportDTO.creationDateTime, "Do MMMM YYYY");
-            console.log(newReportDTO);
 
             newReporterDTO.reportList.push(newReportDTO);
-            console.log('ОПа');
           }
           newTaskDTO.reporterList.push(newReporterDTO);
         }

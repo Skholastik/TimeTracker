@@ -65,6 +65,7 @@ public class ReportDTO {
         this.creationDateTime = creationDateTime;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -78,7 +79,7 @@ public class ReportDTO {
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        return id == null ? 0 : id.hashCode();
     }
 
     public interface CreateReport {

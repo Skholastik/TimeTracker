@@ -14,11 +14,6 @@ import {SignUp} from './signUp/signUp.component';
   template: require('./login.html')
 })
 
-/*@RouteConfig([
- {path: '/', name: 'Index', component: Home, useAsDefault: true},
-
- /!*{ path: '/about', name: 'About', loader: () => require('es6-promise!./about')('About') }*!/
- ])*/
 export class Login {
 
   private showLogIn:boolean=true;
@@ -31,11 +26,11 @@ export class Login {
   constructor() {
   }
 
-  ngOnInit() {
+  public ngOnInit():void {
 
   }
 
-  changeMenu(menu:string) {
+  public changeMenu(menu:string):void {
     if(menu==='LogIn'){
       this.showLogIn=true;
       this.showSignUp=false;

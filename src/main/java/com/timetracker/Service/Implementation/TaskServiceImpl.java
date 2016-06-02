@@ -72,7 +72,7 @@ public class TaskServiceImpl implements TaskService {
         else
             newTask.setPath(newTask.getAncestorTask().getPath() + "." + newTask.getId());
 
-        TaskDTO taskDTO = taskToDTO(newTask,userUtcOffset);
+        TaskDTO taskDTO = taskToDTO(newTask, userUtcOffset);
 
         ResponseMessage responseMessage = new ResponseMessage(true, "");
         responseMessage.addResponseObject("task", taskDTO);
@@ -98,7 +98,7 @@ public class TaskServiceImpl implements TaskService {
 
         UserDTO newUserDTO = new UserDTO();
         newUserDTO.setId(executor.getId());
-        newUserDTO.setName(executor.getUserName());
+        newUserDTO.setUserName(executor.getUserName());
 
         ResponseMessage responseMessage = new ResponseMessage(true, "");
         responseMessage.addResponseObject("executor", newUserDTO);
@@ -117,9 +117,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public ResponseEntity getCreatedTaskList(String creatorUserName, String utcOffset) {
-        User owner = userDao.findByUserName(creatorUserName);
-        List<Task> createdTaskList = owner.getCreatedTaskList();
-        createdTaskList.size();
+        List<Task> createdTaskList = taskDao.getCreatedTaskList(creatorUserName);
 
         List<TaskDTO> taskDTOList = taskListToDTOWithChangeOffset(createdTaskList, utcOffset);
 
@@ -186,13 +184,14 @@ public class TaskServiceImpl implements TaskService {
         ResponseMessage responseMessage = null;
         String executorName = task.getExecutor() == null ? " " : task.getExecutor().getUserName();
 
-        if (!task.getCreator().getUserName().equals(userName) || executorName.equals(userName)) {
+        if (task.getCreator().getUserName().equals(userName) ||
+                task.getExecutor().getUserName().equals(executorName)) {
+            responseMessage = new ResponseMessage(true, "");
+            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
+        } else {
             responseMessage = new ResponseMessage(false, "Вы не создатель, а также не исполнитель задачи: " + "'"
                     + task.getName() + "'" + ", поэтому у вас нет прав для внесения изменений в нее");
             return new ResponseEntity<>(responseMessage, HttpStatus.FORBIDDEN);
-        } else {
-            responseMessage = new ResponseMessage(true, "");
-            return new ResponseEntity<>(responseMessage, HttpStatus.OK);
         }
     }
 
@@ -227,7 +226,7 @@ public class TaskServiceImpl implements TaskService {
         List<TaskDTO> taskDTOList = new ArrayList<>();
 
         for (Task task : taskList)
-            taskDTOList.add(taskToDTO(task,userUtcOffset));
+            taskDTOList.add(taskToDTO(task, userUtcOffset));
 
         return taskDTOList;
     }
@@ -236,7 +235,6 @@ public class TaskServiceImpl implements TaskService {
         TaskDTO newTaskDTO = new TaskDTO();
         newTaskDTO.setId(task.getId());
         newTaskDTO.setName(task.getName());
-        newTaskDTO.setAncestorProjectId(task.getAncestorProject().getId());
         newTaskDTO.setCreationDateTime(task.getCreationDateTime()
                 .withZoneSameInstant(ZoneOffset.of(userUtcOffset))
                 .toLocalDateTime().toString());

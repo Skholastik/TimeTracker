@@ -37,16 +37,8 @@ public class ProjectServiceImpl implements ProjectService {
     UserDao userDao;
 
     @Override
-    public ResponseEntity getUserActiveProjectList(String userName, String userUtcOffset) {
-        User user = userDao.findByUserName(userName);
-        List<ProjectParticipants> projectParticipantsList = user.getTakingPartProjectList();
-        projectParticipantsList.size();
-        List<Project> projectList = new ArrayList<>();
-
-        for (ProjectParticipants takingPartProject : projectParticipantsList) {
-            if (takingPartProject.getProject().getStatus().equals(Status.ACTIVE.getStatus()))
-                projectList.add(takingPartProject.getProject());
-        }
+    public ResponseEntity getUserProjectListByStatus(String userName,String status, String userUtcOffset) {
+        List<Project> projectList = projectDao.getUserProjectListByStatus(userName, status);
 
         List<ProjectDTO> projectDTOList = projectListToDTOWithChangeOffset(projectList, userUtcOffset);
         ResponseMessage responseMessage = new ResponseMessage(true, "");
@@ -55,12 +47,10 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ResponseEntity getCreatedProjectList(String userName, String userUtcOffset) {
-        User user = userDao.findByUserName(userName);
-        List<Project> createdProjectList = user.getCreatedProjectList();
-        createdProjectList.size();
+    public ResponseEntity getCreatedProjectList(String creatorUserName, String userUtcOffset) {
+        List<Project> projectList = projectDao.getCreatedProjectList(creatorUserName);
 
-        List<ProjectDTO> projectDTOList = projectListToDTOWithChangeOffset(createdProjectList, userUtcOffset);
+        List<ProjectDTO> projectDTOList = projectListToDTOWithChangeOffset(projectList, userUtcOffset);
         ResponseMessage responseMessage = new ResponseMessage(true, "");
         responseMessage.addResponseObject("projectList", projectDTOList);
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);

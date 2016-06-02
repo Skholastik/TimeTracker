@@ -3,55 +3,75 @@
   <div id="projects-list-bar">
 
     <div id="projects-menu">
-      <ul>
-        <li>Активные</li>
-        <li>Законченные</li>
-        <li>Поиск проектов</li>
-      </ul>
-    </div>
+      <div id="projects-status-list">
+        <ul>
+          <li>Активные</li>
+          <li>Законченные</li>
+          <li>Поиск проектов</li>
+        </ul>
+      </div>
 
 
-    <div id="project-list">
-      <div id="create-project-button">
+      <div id="create-project-menu">
         <div *ngIf="!openCreateProject" (click)="openCreateProjectSwitch()">
           <span id="plus-part">+</span>
           <span id="create-part">Создать проект</span>
         </div>
-        <form *ngIf="openCreateProject" (blur)="openCreateProjectSwitch()">
-          <input md-input [(ngModel)]="projectName"
-                 placeholder="Введите название проекта" type="text">
-          <button md-raised-button class="md-raised md-primary"
-                  (click)="createProject()">Подтвердить
+        <form [ngFormModel]="createProjectForm"
+              (ngSubmit)="createProject(createProjectForm.value.projectName)"
+              *ngIf="openCreateProject">
+          <input [ngFormControl]="createProjectForm.controls['projectName']"
+                 placeholder="Введите название проекта">
+
+          <button [disabled]="!createProjectForm.valid"
+                  type="submit"
+                  md-raised-button
+                  class="md-raised md-primary">
+            Создать
           </button>
         </form>
       </div>
+
+    </div>
+
+    <div id="project-list">
       <ul>
         <li *ngIf="projectList.length==0">
           <span>У вас нет ни одного проекта</span>
         </li>
         <li *ngFor="let project of projectList"
-            (click)="projectOpenCloseSwitch(project)">
-          <span id="project-name">{{project.name}}</span>
+            id="project-section">
+          <span (click)="projectOpenCloseSwitch(project)">
+            {{project.name}}
+          </span>
 
-          <div id="task-list" *ngIf="openProjectTaskList">
-            <ul *ngIf="targetProject.name==project.name &&
+          <div id="task-list"
+               *ngIf="targetProject.name==project.name &&
              targetTask!=undefined">
-              <li *ngFor="let task of project.taskList">
-               <span>{{task.name}}</span>
+            <ul>
+              <li *ngIf="project.taskList.length == 0">
+                В проекте отсутствуют задачи
+              </li>
+              <li *ngFor="let task of project.taskList"
+                  (click)="switchToTaskBar(task)"
+                  id="task-section">
+              <span>
+                {{task.name}}
+              </span>
               </li>
             </ul>
           </div>
         </li>
       </ul>
-      <!-- <div id="create-task-button">
-      <div><span>+</span> Создать задачу</div>
-    </div>-->
     </div>
+
+
   </div>
+
   <div id="project-task-management">
     <project-management *ngIf="openProjectBar"
                         [project]="targetProject"
-                        (taskSelected)="changeProjectToTaskBar($event)">
+                        (taskSelected)="switchToTaskBar($event.task)">
 
     </project-management>
 

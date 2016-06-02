@@ -46,6 +46,10 @@
 }
 
 #report-bar-container #mega-calendar {
+  display: inline-block;
+  float: right;
+  margin-top: 10px;
+  margin-right: 20px;
   color: rgba(26, 177, 136, 1);
   cursor: pointer;
 }
@@ -54,9 +58,6 @@
   color: rgba(26, 177, 136, 0.8);
 }
 
-#report-bar-container #report-bar-send-report button {
-  background-color: rgba(26, 177, 136, 1);
-}
 
 
 

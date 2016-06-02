@@ -1,4 +1,5 @@
 import {Component,Input,Output,EventEmitter} from '@angular/core';
+import {ControlGroup,FormBuilder,Validators} from '@angular/common';
 
 import {TaskDTO} from '../../../globalServices/entitiesDTO/taskDTO.class';
 import {API_Report} from '../../../globalServices/api/API_Report.service';
@@ -18,36 +19,43 @@ export class ReportBar {
   @Input() task:TaskDTO;
   @Output() createdReport = new EventEmitter();
 
-  private inputHours:string = '';
-  private inputMinutes:string = '';
-  private inputReport:string = '';
   private inputDate:string;
   private reportDate:string;
   private errorMessage:string = '';
 
+  private createReportForm:ControlGroup;
+
+
 
   public constructor(private api_Report:API_Report,
-                     private dateFormatter:DateFormatter) {
+                     private dateFormatter:DateFormatter,
+                     private formBuilder:FormBuilder) {
   }
 
   public ngOnInit():void {
     this.inputDate = this.dateFormatter.getCurrentDate();
     this.reportDate = this.dateFormatter.getCurrentMonth();
+
+    this.createReportForm = this.formBuilder.group({
+      'hours': ['', Validators.required],
+      'minutes': ['', Validators.required],
+      'report': ['', Validators.required],
+    });
   }
 
-  public createReport() {
+  public createReport(value:any) {
 
-    if (this.validateData()) {
-      this.inputHours = this.inputHours.length == 1 ? '0' + this.inputHours : this.inputHours;
-      this.inputMinutes = this.inputMinutes.length == 1 ? '0' + this.inputMinutes : this.inputMinutes;
+    if (this.validateData(value)) {
+      value.hours = value.hours.length == 1 ? '0' + value.hours : value.hours;
+      value.minutes = value.minutes.length == 1 ? '0' + value.minutes : value.minutes;
 
-      let workTime = this.inputHours + ':' + this.inputMinutes;
+      let workTime = value.hours + ':' + value.minutes;
 
-      this.api_Report.createReport(this.inputReport, workTime, this.inputDate,
+      this.api_Report.createReport(value.report, workTime, this.inputDate,
         this.task.id, this.dateFormatter.getUtcOffset()).subscribe(
         data => {
           this.createdReport.emit({
-            report: data.responseObjects.report
+            reporter: data.responseObjects.reporter
           })
         },
         error => {
@@ -57,14 +65,14 @@ export class ReportBar {
     }
   }
 
-  public validateData():boolean {
-    if (this.inputHours.length == 0 || this.inputMinutes.length == 0) {
+  public validateData(value:any):boolean {
+    if (value.hours.length == 0 || value.minutes.length == 0) {
       this.errorMessage = 'Заполните время работы';
       return false;
     }
 
-    let hours:number = +this.inputHours;
-    let inputMinutes:number = +this.inputMinutes;
+    let hours:number = +value.hours;
+    let inputMinutes:number = +value.minutes;
 
     if (hours > 24) {
       this.errorMessage = 'Часов не может быть больше 24';
@@ -76,7 +84,7 @@ export class ReportBar {
       return false;
     }
 
-    if (this.inputReport.trim().length == 0) {
+    if (value.report.trim().length == 0) {
       this.errorMessage = 'Необходимо заполнить отчет';
       return false;
     }

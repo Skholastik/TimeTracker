@@ -10,5 +10,5 @@ export class ProjectDTO extends Serializable{
   creationDateTime:string;
   status:string;
   taskList:TaskDTO[]=[];
-  owner:UserDTO;
+  creator:UserDTO;
 }

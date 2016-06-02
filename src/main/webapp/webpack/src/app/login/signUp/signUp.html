@@ -1,23 +1,24 @@
 <div id="signup">
   <h1>Регистрация</h1>
 
-  <form>
-    <div class="top-row">
-      <div class="field-wrap">
-        <input type="text" placeholder="Имя" required autocomplete="off" />
-      </div>
 
-      <div class="field-wrap">
-        <input type="text" placeholder="Фамилия"  required autocomplete="off"/>
-      </div>
+  <form [ngFormModel]="signUpForm"
+        (ngSubmit)="sighUp(signUpForm.value)">
+
+    <div class="field-wrap">
+      <input [ngFormControl]="signUpForm.controls['userName']"
+             type="text" placeholder="Имя пользователя" required autocomplete="off"/>
+    </div>
+
+
+    <div class="field-wrap">
+      <input [ngFormControl]="signUpForm.controls['email']"
+             type="email" placeholder="Email" required autocomplete="off"/>
     </div>
 
     <div class="field-wrap">
-      <input type="email" placeholder="Email" required autocomplete="off"/>
-    </div>
-
-    <div class="field-wrap">
-      <input type="password" placeholder="Пароль" required autocomplete="off"/>
+      <input [ngFormControl]="signUpForm.controls['password']"
+             type="password" placeholder="Пароль" required autocomplete="off"/>
     </div>
     <button type="submit" class="button button-block">Зарегистрироваться</button>
   </form>

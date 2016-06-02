@@ -32,13 +32,9 @@ public class ProjectDTO {
 
     private UserDTO creator;
 
-    Set<TaskDTO> taskList;
+    Set<TaskDTO> taskList = new HashSet<>();
 
     public void addTask(TaskDTO task) {
-
-        if (taskList == null)
-            taskList = new HashSet<>();
-
         taskList.add(task);
     }
 
@@ -101,6 +97,7 @@ public class ProjectDTO {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+
         if (!(o instanceof ProjectDTO)) return false;
 
         ProjectDTO that = (ProjectDTO) o;
@@ -111,7 +108,7 @@ public class ProjectDTO {
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        return id == null ? 0 : id.hashCode();
     }
 
     public interface CreateProject {

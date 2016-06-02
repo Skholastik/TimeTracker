@@ -1,4 +1,5 @@
-import {Component,ViewEncapsulation} from '@angular/core';
+import {Component,ViewEncapsulation,EventEmitter,Output} from '@angular/core';
+import {ControlGroup,FormBuilder,Validators} from '@angular/common';
 
 import {ProjectManagement} from './projectManagement/projectManagement.component';
 import {TaskManagement} from './taskManagement/taskManagement.component';
@@ -8,13 +9,11 @@ import {API_Project} from '../../globalServices/api/API_Project.service';
 import {API_Task} from '../../globalServices/api/API_Task.service';
 import {DateFormatter} from '../../globalServices/dateFromatter/dateFormatter.service';
 
-/*import {Calendar} from '../globalServices/datePicker/calendar.component'*/
-
 
 @Component({
   selector: 'projects',
   providers: [API_Project, API_Task],
-  directives: [ProjectManagement,TaskManagement],
+  directives: [ProjectManagement, TaskManagement],
   pipes: [],
   encapsulation: ViewEncapsulation.Native,
   styles: [require('./projects.css')],
@@ -25,29 +24,36 @@ export class Projects {
   private targetProject:ProjectDTO = new ProjectDTO();
   private targetTask:TaskDTO;
   private projectList:ProjectDTO[] = [];
-  private projectName:string;
   private openProjectBar:boolean = false;
   private openTaskBar:boolean = false;
-  private openProjectTaskList:boolean=false;
+  private openProjectTaskList:boolean = false;
   private openCreateProject:boolean = false;
+  private status:string = 'Active';
+
+  private createProjectForm:ControlGroup;
 
 
   ngOnInit() {
-    this.getUserActiveProjectList();
+    this.getUserProjectListByStatus();
+
+    this.createProjectForm = this.formBuilder.group({
+      'projectName': ['', Validators.required],
+    });
 
   }
 
   constructor(private api_Project:API_Project,
               private api_Task:API_Task,
-              private dateFormatter:DateFormatter) {
+              private dateFormatter:DateFormatter,
+              private formBuilder:FormBuilder) {
   }
 
   /** Возвращает активные проекты пользователя*/
-  getUserActiveProjectList():void {
-    this.api_Project.getUserActiveProjectList(this.dateFormatter.getUtcOffset()).subscribe(
+  getUserProjectListByStatus():void {
+    this.api_Project.getUserProjectListByStatus(this.status, this.dateFormatter.getUtcOffset()).subscribe(
       data => {
         if (data.responseObjects.projectList.length != 0)
-          this.projectList = this.transferProjectListToDTO(data.responseObjects.projectList);
+          this.transferProjectListToDTO(data.responseObjects.projectList);
       },
       error => {
         console.log(error);
@@ -69,13 +75,16 @@ export class Projects {
   }
 
 
-  createProject() {
-    this.api_Project.createProject(this.projectName, this.dateFormatter.getUtcOffset()).subscribe(
+  createProject(projectName:string) {
+    console.log(projectName);
+    this.api_Project.createProject(projectName, this.dateFormatter.getUtcOffset()).subscribe(
       data => {
-        this.targetProject.fillFromJSON(JSON.stringify(data.responseObjects.project));
-        this.targetProject.creationDateTime = this.dateFormatter
-          .changeDateTimeToRuWithPattern(this.targetProject.creationDateTime, "Do MMMM YYYY");
-        this.projectList.push(this.targetProject);
+        let newProject = new ProjectDTO();
+        newProject.fillFromJSON(JSON.stringify(data.responseObjects.project));
+        newProject.creationDateTime = this.dateFormatter
+          .changeDateTimeToRuWithPattern(newProject.creationDateTime, "Do MMMM YYYY");
+        this.targetProject = newProject;
+        this.projectList.push(newProject);
         this.openProjectBar = true;
         this.openCreateProjectSwitch();
       },
@@ -88,16 +97,14 @@ export class Projects {
 
 
   /** Трансформирует входящий массив проектов в DTO объект, с изменением формата времени*/
-  transferProjectListToDTO(data:any[]):ProjectDTO[] {
-    let projectDTOArray:ProjectDTO[] = [];
+  transferProjectListToDTO(data:any[]):void {
     for (let i = 0; i < data.length; i++) {
       let newProjectDTO = new ProjectDTO();
       newProjectDTO.fillFromJSON(JSON.stringify(data[i]));
       newProjectDTO.creationDateTime = this.dateFormatter
         .changeDateTimeToRuWithPattern(newProjectDTO.creationDateTime, "Do MMMM YYYY");
-      projectDTOArray.push(newProjectDTO);
+      this.projectList.push(newProjectDTO);
     }
-    return projectDTOArray;
   }
 
   /** Трансформирует входящий массив задач в DTO объект, с изменением формата времени*/
@@ -114,23 +121,24 @@ export class Projects {
 
   public projectOpenCloseSwitch(project:ProjectDTO):void {
     this.openProjectBar = true;
-    this.openTaskBar=false;
-    this.openProjectTaskList=false;
+    this.openTaskBar = false;
+    this.openProjectTaskList = false;
     this.targetProject = project;
 
     if (this.targetProject.taskList.length == 0)
       this.getProjectHighTaskList();
+
   }
 
   public openCreateProjectSwitch():void {
     this.openCreateProject = this.openCreateProject == false;
   }
 
-  public changeProjectToTaskBar(event):void {
-    this.openProjectTaskList=true;
-    this.openProjectBar=false;
-    this.openTaskBar=true;
-    this.targetTask=event.task;
+  public switchToTaskBar(task:TaskDTO):void {
+    this.openProjectBar = false;
+    this.openTaskBar = true;
+    this.openProjectTaskList = true;
+    this.targetTask = task;
   }
 
 

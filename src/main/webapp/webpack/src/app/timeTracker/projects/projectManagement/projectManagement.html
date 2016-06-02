@@ -18,8 +18,8 @@
       Создан: {{project.creationDateTime}}
     </div>
 
-    <div id="owner-name-bar">
-      ( Владелец : {{project.owner.name}} )
+    <div id="creator-name-bar">
+      ( Владелец : {{project.creator.userName}} )
     </div>
   </div>
 
@@ -43,17 +43,13 @@
     <div id="add-executor-bar">
       <select>
         <option selected> Добавить пользователя</option>
-        <option>Миша</option>
-        <option>Вася</option>
+        <option>Функция доступна в задачах</option>
       </select>
 
     </div>
   </div>
 
   <div id="third-level">
-    <!--  <div id="select-end-date">
-        <span>Выбрать дату окончания</span>
-      </div>-->
     <div id="add-task">
 
       <div id="create-task-bar"
@@ -108,9 +104,6 @@
                   (keydown.enter)="changeDescription(descr.value)"
                   (mouseleave)="changeDescription(descr.value)">
         </textarea>
-        <!--<button md-raised-button class="md-raised md-primary"-->
-        <!--(click)="changeDescription(descr.value)">Изменить-->
-        <!--</button>-->
       </div>
 
     </div>

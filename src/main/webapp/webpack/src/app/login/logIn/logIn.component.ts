@@ -1,13 +1,13 @@
 import {Component} from '@angular/core';
 import {RouteConfig, Router} from '@angular/router-deprecated';
 
-import {API_LogIn} from '../../globalServices/api/API_LogIn.service';
+import {API_User} from '../../globalServices/api/API_User.service';
 
 
 @Component({
   selector: 'log-in',
   pipes: [],
-  providers: [API_LogIn],
+  providers: [API_User],
   directives: [],
   styles: [require('./logIn.css')],
   template: require('./logIn.html')
@@ -19,17 +19,17 @@ export class LogIn {
   private username:string;
   private password:string;
 
-  constructor(private api_LogIn:API_LogIn,
+  constructor(private api_User:API_User,
               private router:Router) {
   }
 
-  authenticate() {
+  public authenticate():void {
     let result:number;
-    this.api_LogIn.authenticate(this.username, this.password).subscribe(
+    this.api_User.authenticate(this.username, this.password).subscribe(
       data => {
         result = data;
         if (result == 200)
-          this.router.navigateByUrl('/projects');
+          this.router.navigate(['TimeTracker']);
       },
       error => {
         console.log(error);
@@ -38,7 +38,14 @@ export class LogIn {
   }
 
 
-  ngOnInit() {
+  public ngOnInit():void {
+    this.api_User.checkAccess().subscribe(
+      data=> {
+        this.router.navigate(["TimeTracker"]);
+      },
+      error=> {
+      }
+    );
   }
 }
 

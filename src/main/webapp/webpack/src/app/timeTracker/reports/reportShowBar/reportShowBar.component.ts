@@ -17,14 +17,26 @@ import {UserDTO} from '../../../globalServices/entitiesDTO/userDTO.class';
 })
 export class ReportShowBar {
 
-  @Input() reportList:any;
-  private reportListDTO:ReportDTO;
+  @Input() reportProjectList:ProjectDTO[];
+  @Input() reportCreated:string;
+  private showErrorMessage = false;
 
   constructor() {
-
   }
 
   public ngOnInit():void {
-
   }
+
+  public ngDoCheck ():void {
+
+    if (this.reportCreated == 'true') {
+      if (this.reportProjectList.length != 0)
+        this.showErrorMessage = false;
+      else
+        this.showErrorMessage = true;
+    }
+    else
+      this.showErrorMessage = false;
+  }
+
 }

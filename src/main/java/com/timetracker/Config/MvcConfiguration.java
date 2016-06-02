@@ -11,7 +11,6 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -30,19 +29,6 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**").addResourceLocations("/");
     }
-
- /*   @Bean
-    public FilterRegistrationBean filterRegistrationBean() {
-        FilterRegistrationBean registrationBean = new FilterRegistrationBean();
-        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
-        registrationBean.setFilter(characterEncodingFilter);
-        characterEncodingFilter.setEncoding("UTF-8");
-        characterEncodingFilter.setForceEncoding(true);
-        registrationBean.setOrder(Integer.MIN_VALUE);
-        registrationBean.addUrlPatterns("*//*");
-        return registrationBean;
-    }*/
-
 
     @Bean(name = "dataSource")
     public DriverManagerDataSource dataSource() {
@@ -89,5 +75,11 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter {
     public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
         return new PersistenceExceptionTranslationPostProcessor();
     }
+
+
+
+ /*   driverManagerDataSource.setUrl("jdbc:mysql://mysql35658-timetracker.mycloud.by/pinkunikorn");
+    driverManagerDataSource.setUsername("root");
+    driverManagerDataSource.setPassword("SVBcnl97791");*/
 
 }

@@ -7,7 +7,9 @@ public interface UserService {
 
     User findById(int id);
     User findByUserName(String userName);
+    ResponseEntity checkAccess(String userName);
     ResponseEntity getUserList();
     ResponseEntity getParticipantProjectUserList(int projectId, String ownerName);
     ResponseEntity getParticipantTaskUserList(int taskId);
+    ResponseEntity signUp(String userName,String email,String password);
 }

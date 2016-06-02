@@ -3,7 +3,13 @@
   <div class="smartphone-menu-trigger"></div>
   <header class="avatar">
     <img src="http://images-cdn.9gag.com/photo/4788755_700b.jpg"/>
-    <h2>John B.</h2>
+    <h2>{{userName}}</h2>
+    <button (click)="logout()"
+            id="logout-button"
+            md-raised-button
+            class="md-raised md-primary">
+      Выйти
+    </button>
   </header>
   <ul>
     <li [routerLink]=" ['./WorkDashBoard'] " tabindex="0" class="icon-briefcase"><a>Моя работа</a></li>

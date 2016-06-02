@@ -60,43 +60,37 @@ public class ReportServiceImpl implements ReportService {
         newReport.setAncestorTask(ancestorTask);
         newReport.setAncestorProject(ancestorTask.getAncestorProject());
 
-        ReportDTO reportDTO = reportToDTO(newReport,userUtcOffset);
+        ReporterDTO reporterDTO=new ReporterDTO();
+        reporterDTO.setId(reporter.getId());
+        reporterDTO.setName(reporter.getUserName());
+        ReportDTO reportDTO = reportToDTO(newReport, userUtcOffset);
+        reporterDTO.addReport(reportDTO);
 
         ResponseMessage responseMessage = new ResponseMessage(true, "");
-        responseMessage.addResponseObject("report", reportDTO);
+        responseMessage.addResponseObject("reporter", reporterDTO);
         return new ResponseEntity<>(responseMessage, HttpStatus.CREATED);
     }
 
     @Override
-    public ResponseEntity getTaskAllReportList(int taskId, String userUtcOffset) {
-        List<Report> reportList = reportDao.getTaskAllReportList(taskId);
-        List<ReportDTO> reportDTOList = reportListToDTO(reportList, userUtcOffset);
+    public ResponseEntity getTaskReporterList(int taskId, String userUtcOffset) {
+
+        List<User> reporterList = reportDao.getTaskReporterList(taskId);
+        List<ReporterDTO> reporterDTOList = userListToReporterDTO(reporterList, userUtcOffset);
 
         ResponseMessage responseMessage = new ResponseMessage(true, "");
-        responseMessage.addResponseObject("reportList", reportDTOList);
+        responseMessage.addResponseObject("reporterList", reporterDTOList);
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
 
     @Override
-    public ResponseEntity getProjectReportList(String creatorUserName, int projectId, int creatorId, String startDate, String endDate, String userUtcOffset) {
-        List<Report> reportList = reportDao.getProjectReportList(creatorUserName, projectId, creatorId, startDate, endDate);
+    public ResponseEntity getReportList(Integer reportType,String creatorUserName, int projectOrTaskId, int creatorId, String startDate, String endDate, String userUtcOffset) {
+        List<Report> reportList = reportDao.getReportList(reportType,creatorUserName, projectOrTaskId, creatorId, startDate, endDate);
 
         Set<ProjectDTO> reportDTOList = prepareDetailedReport(reportList, userUtcOffset);
         ResponseMessage responseMessage = new ResponseMessage(true, "");
         responseMessage.addResponseObject("reportProjectList", reportDTOList);
         return new ResponseEntity<>(responseMessage, HttpStatus.OK);
     }
-
-    @Override
-    public ResponseEntity getTaskReportList(String creatorUserName, int taskId, int creatorId, String startDate, String endDate, String userUtcOffset) {
-        List<Report> reportList = reportDao.getTaskReportList(creatorUserName, taskId, creatorId, startDate, endDate);
-
-        Set<ProjectDTO> reportDTOList = prepareDetailedReport(reportList, userUtcOffset);
-        ResponseMessage responseMessage = new ResponseMessage(true, "");
-        responseMessage.addResponseObject("reportProjectList", reportDTOList);
-        return new ResponseEntity<>(responseMessage, HttpStatus.OK);
-    }
-
 
     public List<ReportDTO> reportListToDTO(List<Report> reportList, String userUtcOffset) {
         List<ReportDTO> reportDTOList = new ArrayList<>();
@@ -121,7 +115,26 @@ public class ReportServiceImpl implements ReportService {
         return newReportDTO;
     }
 
-    /** Необходимо закоментировать*/
+    public List<ReporterDTO> userListToReporterDTO(List<User> userList, String userUtcOffset) {
+        List<ReporterDTO> reporterDTOList = new ArrayList<>();
+
+        for (User reporter : userList) {
+            ReporterDTO newReporter = new ReporterDTO();
+            newReporter.setId(reporter.getId());
+            newReporter.setName(reporter.getUserName());
+
+            for (Report report : reporter.getCreatedReportList())
+                newReporter.addReport(reportToDTO(report, userUtcOffset));
+
+            reporterDTOList.add(newReporter);
+        }
+        return reporterDTOList;
+    }
+
+    /**
+     * Заполняет полную цепочку от отчета до проекта, на основе входящего массива отчетов.
+     * Такой подход необходим из-за особенностей реализации на клиенте.
+     */
 
     public Set<ProjectDTO> prepareDetailedReport(List<Report> reportList, String userUtcOffset) {
         Set<ProjectDTO> reportProjectList = new HashSet<>();

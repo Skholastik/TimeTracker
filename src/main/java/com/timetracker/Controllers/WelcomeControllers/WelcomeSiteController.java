@@ -16,25 +16,25 @@ public class WelcomeSiteController {
         return "forward:/index.html";
     }
 
-    @RequestMapping(path = {"/workDashBoard"}, method = RequestMethod.GET)
+    @RequestMapping(path = {"/timeTracker/workDashBoard"}, method = RequestMethod.GET)
     public String secondLevelIndex() {
         return "forward:/index.html";
     }
 
-    @RequestMapping(path = {"/login"}, method = RequestMethod.GET)
+    @RequestMapping(path = {"/timeTracker/projects"}, method = RequestMethod.GET)
     public String thirdLevelIndex() {
         return "forward:/index.html";
     }
 
-    @RequestMapping(path = {"/projects"}, method = RequestMethod.GET)
+    @RequestMapping(path = {"/timeTracker/reports"}, method = RequestMethod.GET)
     public String fourthLevelIndex() {
         return "forward:/index.html";
     }
-    @RequestMapping(path = {"/reports"}, method = RequestMethod.GET)
+
+    @RequestMapping(path = {"/login"}, method = RequestMethod.GET)
     public String fifthLevelIndex() {
         return "forward:/index.html";
     }
-
 
     private String getPrincipal() {
         String userName = null;

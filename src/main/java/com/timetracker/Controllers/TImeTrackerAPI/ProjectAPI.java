@@ -1,6 +1,7 @@
 package com.timetracker.Controllers.TImeTrackerAPI;
 
 import com.timetracker.Entities.DTO.ProjectDTO;
+import com.timetracker.Service.AncillaryServices.CustomAnnotation.CustomStatusValid;
 import com.timetracker.Service.Interfaces.ProjectService;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +23,14 @@ public class ProjectAPI {
     @Autowired
     ProjectService projectService;
 
-    @RequestMapping(value = "/getUserActiveProjectList", method = RequestMethod.GET)
-    public ResponseEntity getUserProjectList(@RequestParam(defaultValue = "0") String utcOffset) {
+    @RequestMapping(value = "/getUserProjectListByStatus", method = RequestMethod.GET)
+    public ResponseEntity getUserProjectListByStatus(@RequestParam @CustomStatusValid String status,
+                                                     @RequestParam(defaultValue = "0") String utcOffset) {
 
         if (utcOffset.equals("0"))
             utcOffset = getCurrentOffset();
 
-        return projectService.getUserActiveProjectList(getPrincipalName(), utcOffset);
+        return projectService.getUserProjectListByStatus(getPrincipalName(), status, utcOffset);
     }
 
     @RequestMapping(value = "/getCreatedProjectList", method = RequestMethod.GET)

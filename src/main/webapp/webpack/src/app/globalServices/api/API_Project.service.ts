@@ -24,11 +24,12 @@ export class API_Project {
     return offset.replace('+', '%2B')
   }
 
-  public getUserActiveProjectList(utcOffset:string):any {
+  public getUserProjectListByStatus(status:string, utcOffset:string):any {
     let headers:Headers = this.getUrlencodedHeader();
     let params:URLSearchParams = new URLSearchParams();
+    params.set('status', status);
     params.set('utcOffset', this.correctOffset(utcOffset));
-    return this.http.get('/api/project/getUserActiveProjectList', {
+    return this.http.get('/api/project/getUserProjectListByStatus', {
       headers: headers, search: params
     }).map(res => res.json());
   }

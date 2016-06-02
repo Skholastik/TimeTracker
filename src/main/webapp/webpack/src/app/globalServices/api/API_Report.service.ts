@@ -41,51 +41,55 @@ export class API_Report {
     }).map(res => res.json());
   }
 
-  public getTaskAllReportList(taskId:string, utcOffset:string):any {
+  public getTaskReporterList(taskId:string, utcOffset:string):any {
     let headers:Headers = this.getJsonHeader();
 
     let params:URLSearchParams = new URLSearchParams();
     params.set('utcOffset', this.correctOffset(utcOffset));
     params.set('taskId', taskId);
 
-    return this.http.get('/api/report/getTaskAllReportList', {
+    return this.http.get('/api/report/getTaskReporterList', {
       headers: headers, search: params
     }).map(res => res.json());
   }
 
-  public getProjectReportList(utcOffset:string, projectId:string, userId:string,
-                              startDate:string, endDate:string):any {
+  public getReportList(utcOffset:string, reportType:string, projectOrTaskId:string, userId:string,
+                       startDate:string, endDate:string):any {
     let headers:Headers = this.getJsonHeader();
 
     let params:URLSearchParams = new URLSearchParams();
     params.set('utcOffset', this.correctOffset(utcOffset));
-    if (projectId.length!=0)
-      params.set('projectId', projectId);
-    if (userId.length!=0)
+    if (reportType == 'Проект')
+      params.set('reportType', '1');
+    if (reportType == 'Задача')
+      params.set('reportType', '2');
+    if (projectOrTaskId.length != 0)
+      params.set('projectOrTaskId', projectOrTaskId);
+    if (userId.length != 0)
       params.set('creatorId', userId);
-    if (startDate.length!=0)
+    if (startDate.length != 0)
       params.set('startDate', startDate);
-    if (endDate.length!=0)
+    if (endDate.length != 0)
       params.set('endDate', endDate);
 
-    return this.http.get('/api/report/getProjectReportList', {
+    return this.http.get('/api/report/getReportList', {
       headers: headers, search: params
     }).map(res => res.json());
   }
 
   public getTaskReportList(utcOffset:string, projectId:string, userId:string,
-                              startDate:string, endDate:string):any {
+                           startDate:string, endDate:string):any {
     let headers:Headers = this.getJsonHeader();
 
     let params:URLSearchParams = new URLSearchParams();
     params.set('utcOffset', this.correctOffset(utcOffset));
-    if (projectId.length!=0)
+    if (projectId.length != 0)
       params.set('taskId', projectId);
-    if (userId.length!=0)
+    if (userId.length != 0)
       params.set('creatorId', userId);
-    if (startDate.length!=0)
+    if (startDate.length != 0)
       params.set('startDate', startDate);
-    if (endDate.length!=0)
+    if (endDate.length != 0)
       params.set('endDate', endDate);
 
     return this.http.get('/api/report/getTaskReportList', {

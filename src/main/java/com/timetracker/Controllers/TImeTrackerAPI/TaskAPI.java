@@ -25,13 +25,15 @@ public class TaskAPI {
 
     @RequestMapping(value = "/createTask", method = RequestMethod.POST)
     public ResponseEntity createTask(@RequestParam(defaultValue = "0") String utcOffset,
+                                     @NotBlank(message = "Необходимо указать ID родительской задачи")
+                                     @RequestParam int ancestorProjectId,
                                      @RequestBody
-                                     @Validated({ProjectDTO.CreateProject.class}) TaskDTO transferTask) {
+                                     @Validated({TaskDTO.CreateTask.class}) TaskDTO transferTask) {
 
         if (utcOffset.equals("0"))
             utcOffset = getCurrentOffset();
 
-        return taskService.createTask(transferTask.getName(), transferTask.getAncestorProjectId(),
+        return taskService.createTask(transferTask.getName(), ancestorProjectId,
                 utcOffset, getPrincipalName());
     }
 
@@ -100,6 +102,13 @@ public class TaskAPI {
                                                    @RequestParam Integer id) {
 
         return taskService.checkLowLevelAuthorities(id, getPrincipalName());
+    }
+
+    @RequestMapping(value = "/checkHighLevelAuthorities", method = RequestMethod.GET)
+    public ResponseEntity checkHighLevelAuthorities(@NotBlank(message = "Необходимо указать ID задачи")
+                                                   @RequestParam Integer id) {
+
+        return taskService.checkHighLevelAuthorities(id, getPrincipalName());
     }
 
 

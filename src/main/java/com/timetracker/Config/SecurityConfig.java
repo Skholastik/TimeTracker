@@ -14,6 +14,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
@@ -24,6 +25,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
+
+    @Autowired
+    private LogoutSuccessHandler logoutSuccessHandler;
 
     @Autowired
     private AccessDeniedHandler accessDeniedHandler;
@@ -55,13 +59,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .formLogin()
-                .permitAll()
-                .and()
-                .authorizeRequests()
-                .antMatchers("/projects", "/","/workDashBoard")
-                .hasAnyRole("USER", "ADMIN")
-                .and()
                 .formLogin().loginPage("/login")
                 .usernameParameter("username").passwordParameter("password")
                 .successHandler(authenticationSuccessHandler)
@@ -69,7 +66,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler);
+                .accessDeniedHandler(accessDeniedHandler)
+                .and()
+                .logout()
+                .logoutSuccessHandler(logoutSuccessHandler);
 
                 /*.and()
                 .httpBasic().disable()

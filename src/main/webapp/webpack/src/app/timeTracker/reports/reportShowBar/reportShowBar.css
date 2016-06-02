@@ -1,0 +1,47 @@
+#report-bar{
+  width: 40%;
+}
+
+ul {
+  list-style: none;
+}
+
+#project-part {
+  padding: 5px;
+  color: white;
+  font-size: 20px;
+  background-color: rgba(26, 177, 136, 1);
+}
+
+#task-part {
+  padding: 3px;
+  color: white;
+  font-size: 18px;
+  background-color: rgba(26, 177, 136, 0.8);
+}
+
+#reporter-part {
+  padding: 2px;
+  color: white;
+  font-size: 16px;
+  background-color: rgba(26, 177, 136, 0.6);
+}
+
+#report-part {
+  margin: 2px 0;
+  background: white;
+}
+
+#report-part p {
+  margin: 0 0 5px 2px;
+  padding: 2px;
+  font-size: 16px;
+}
+
+#report-part span {
+  padding: 2px;
+  margin-right: 5px;
+  font-size: 14px;
+  color: rgba(26, 177, 136, 1)
+}
+

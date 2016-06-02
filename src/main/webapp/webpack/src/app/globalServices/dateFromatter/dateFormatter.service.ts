@@ -26,6 +26,6 @@ export class DateFormatter {
   }
 
   public transformTime(time:string):string{
-    return time.replace(":","ч")+'мин';
+    return time.replace(":"," ч ")+' мин';
   }
 }

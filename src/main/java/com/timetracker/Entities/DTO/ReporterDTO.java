@@ -8,7 +8,7 @@ public class ReporterDTO {
     private int id;
     private String name;
     private String taskElapsedTime;
-    Set<ReportDTO> reportList;
+    Set<ReportDTO> reportList  = new HashSet<>();
 
 
     public void addTaskElapsedTime(LocalTime time) {
@@ -30,10 +30,6 @@ public class ReporterDTO {
     }
 
     public void addReport(ReportDTO report) {
-
-        if (reportList == null)
-            reportList = new HashSet<>();
-
         reportList.add(report);
     }
 
@@ -68,7 +64,6 @@ public class ReporterDTO {
     public void setReportList(Set<ReportDTO> reportList) {
         this.reportList = reportList;
     }
-
 
     @Override
     public boolean equals(Object o) {

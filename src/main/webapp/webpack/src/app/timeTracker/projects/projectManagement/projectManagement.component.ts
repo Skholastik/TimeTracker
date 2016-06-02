@@ -90,8 +90,7 @@ export class ProjectManagement {
           .changeDateTimeToRuWithPattern(newTask.creationDateTime, "Do MMMM YYYY");
         this.project.taskList.push(newTask);
 
-        console.log(this.project);
-        console.log(data);
+        this.showTaskNameInput = false;
       },
       error=> {
         console.log(error);
@@ -108,7 +107,6 @@ export class ProjectManagement {
     else {
       this.api_Project.checkAccessToChangeProject(this.project.id).subscribe(
         data=> {
-          console.log(data);
           this.showProjectNameInput = true;
           this.accessToChangeProject = true;
 

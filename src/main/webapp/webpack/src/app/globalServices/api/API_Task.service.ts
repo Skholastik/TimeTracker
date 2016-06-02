@@ -44,13 +44,14 @@ export class API_Task {
     }).map(res => res.json());
   }
 
-  public createTask(taskName:string, projectName:string, utcOffset:string):any {
+  public createTask(taskName:string, projectId:string, utcOffset:string):any {
     let headers:Headers = this.getJsonHeader();
 
     let params:URLSearchParams = new URLSearchParams();
     params.set('utcOffset', this.correctOffset(utcOffset));
+    params.set('ancestorProjectId', projectId);
 
-    let transferData:any = JSON.stringify({name: taskName, ancestorProjectId: projectName});
+    let transferData:any = JSON.stringify({name: taskName});
 
     return this.http.post('/api/task/createTask', transferData, {
       headers: headers, search: params
@@ -104,6 +105,14 @@ export class API_Task {
     return this.http.get('/api/task/checkLowLevelAuthorities', {
       headers: headers, search: params
     }).map(res => res.json());
+  }
 
+  public checkHighLevelAuthorities(taskId:string):any {
+    let headers:Headers = this.getUrlencodedHeader();
+    let params:URLSearchParams = new URLSearchParams();
+    params.set('id', taskId);
+    return this.http.get('/api/task/checkHighLevelAuthorities', {
+      headers: headers, search: params
+    }).map(res => res.json());
   }
 }
